@@ -1,0 +1,768 @@
+/* ========================================
+   DARK / LIGHT MODE — CSS Variables
+   ======================================== */
+
+:root {
+  --font-family: 'Inter', sans-serif;
+  --app-bg: #f3f3f3;
+  --app-text: #181818;
+  --app-muted: #686868;
+  --card-bg: #ffffff;
+  --card-border: #d8d8d8;
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.05);
+  --input-bg: #ffffff;
+  --input-border: #b8b8b8;
+  --input-text: #181818;
+  --table-head-bg: #ededed;
+  --table-row-hover: #f7f7f7;
+  --table-border: #dddddd;
+  --page-title: #111111;
+  --stat-value: #111111;
+  --focus-color: #333333;
+  --focus-ring: rgba(51, 51, 51, 0.18);
+  --overlay-bg: rgba(0, 0, 0, 0.5);
+  --scrollbar-track: #ededed;
+  --scrollbar-thumb: #aaaaaa;
+}
+
+/* ---------- DARK MODE ---------- */
+html[data-theme='dark'] {
+  --app-bg: #0b0b0b;
+  --app-text: #eeeeee;
+  --app-muted: #a0a0a0;
+  --card-bg: #171717;
+  --card-border: #303030;
+  --card-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  --input-bg: #202020;
+  --input-border: #4a4a4a;
+  --input-text: #f5f5f5;
+  --table-head-bg: #1d1d1d;
+  --table-row-hover: #252525;
+  --table-border: #303030;
+  --page-title: #fafafa;
+  --stat-value: #fafafa;
+  --focus-color: #f0f0f0;
+  --focus-ring: rgba(255, 255, 255, 0.16);
+  --overlay-bg: rgba(0, 0, 0, 0.7);
+  --scrollbar-track: #171717;
+  --scrollbar-thumb: #555555;
+  color-scheme: dark;
+}
+
+html[data-theme='dark'] body {
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+html, body, #root {
+  font-family: 'Inter', sans-serif !important;
+}
+
+body {
+  font-family: 'Inter', sans-serif !important;
+}
+
+*, *::before, *::after {
+  font-family: inherit;
+}
+
+html[data-theme='dark'] .app-layout {
+  background: var(--app-bg);
+}
+
+html[data-theme='dark'] .card,
+html[data-theme='dark'] .stat-card,
+html[data-theme='dark'] .dashboard-card,
+html[data-theme='dark'] .data-table,
+html[data-theme='dark'] .settings-section,
+html[data-theme='dark'] .bill-preview-col .card,
+html[data-theme='dark'] .bill-form-col .card {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+html[data-theme='dark'] .page-title,
+html[data-theme='dark'] .card-header h3,
+html[data-theme='dark'] .stat-card-value,
+html[data-theme='dark'] .report-stat-value,
+html[data-theme='dark'] .profile-stat-value,
+html[data-theme='dark'] .customer-profile-panel h2 {
+  color: var(--page-title);
+}
+
+html[data-theme='dark'] .page-subtitle,
+html[data-theme='dark'] .stat-card-label,
+html[data-theme='dark'] .activity-customer,
+html[data-theme='dark'] .activity-time,
+html[data-theme='dark'] .report-stat-label {
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .input,
+html[data-theme='dark'] .search-input,
+html[data-theme='dark'] select.input {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--input-text);
+}
+
+html[data-theme='dark'] .input:focus {
+  border-color: var(--focus-color);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+html[data-theme='dark'] .data-table thead {
+  background: #1A1A1A;
+}
+
+html[data-theme='dark'] .data-table th {
+  color: var(--app-muted);
+  border-bottom-color: var(--card-border);
+}
+
+html[data-theme='dark'] .data-table td {
+  color: var(--app-text);
+  border-bottom-color: #333333;
+}
+
+html[data-theme='dark'] .data-table tbody tr:hover {
+  background: var(--table-row-hover);
+}
+
+html[data-theme='dark'] .total-row td {
+  background: #1A1A1A !important;
+  border-top-color: #424242;
+  color: #E0E0E0 !important;
+}
+
+html[data-theme='dark'] .settings-tab {
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .settings-tab:hover {
+  background: #1A1A1A;
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .settings-tab-active {
+  background: #212121;
+  color: #FFFFFF;
+}
+
+html[data-theme='dark'] .theme-card {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .theme-card-name {
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .report-tab {
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .report-tabs {
+  background: #1A1A1A;
+}
+
+html[data-theme='dark'] .report-tab-active {
+  background: #1A1A1A;
+  color: #FFFFFF;
+}
+
+html[data-theme='dark'] .report-stat {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .modal-content {
+  background: #1A1A1A;
+}
+
+html[data-theme='dark'] .modal-header {
+  border-bottom-color: var(--card-border);
+}
+
+html[data-theme='dark'] .modal-title {
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .empty-state-title {
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .customer-profile-panel {
+  background: #1A1A1A;
+}
+
+html[data-theme='dark'] .profile-stat {
+  background: #000000;
+}
+
+html[data-theme='dark'] .profile-invoice-row {
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .quick-action-card {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .quick-action-card:hover {
+  border-color: #777777;
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.06);
+}
+
+html[data-theme='dark'] .quick-action-label {
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .activity-item {
+  border-bottom-color: #333333;
+}
+
+html[data-theme='dark'] .summary-strip .summary-item,
+html[data-theme='dark'] .report-summary-strip .report-stat {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .pagination-bar {
+  border-top-color: var(--card-border);
+}
+
+html[data-theme='dark'] .filters-panel {
+  background: #1A1A1A;
+  border-bottom-color: var(--card-border);
+}
+
+html[data-theme='dark'] .table-controls {
+  border-bottom-color: var(--card-border);
+}
+
+html[data-theme='dark'] .bill-preview-col {
+  background: #000000;
+}
+
+html[data-theme='dark'] .preview-scroll {
+  background: #000000;
+}
+
+html[data-theme='dark'] .preview-toolbar {
+  background: var(--card-bg);
+  border-bottom-color: var(--card-border);
+}
+
+html[data-theme='dark'] .preview-save-bar {
+  background: var(--card-bg);
+  border-top-color: var(--card-border);
+}
+
+/* ---------- CREATE BILL FORM — DARK MODE ---------- */
+
+html[data-theme='dark'] .form-section-icon {
+  background: var(--table-head-bg);
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .form-section.is-open .form-section-icon {
+  background: var(--app-text);
+  color: var(--card-bg);
+}
+
+html[data-theme='dark'] .form-section-title {
+  color: var(--page-title);
+}
+
+html[data-theme='dark'] .form-section-subtitle {
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .form-section-badge {
+  background: var(--table-head-bg);
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .form-section.is-open .form-section-badge {
+  background: var(--app-text);
+  color: var(--card-bg);
+}
+
+html[data-theme='dark'] .form-section-chevron {
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .form-section-body {
+  background: var(--card-bg);
+  border-top-color: var(--card-border);
+}
+
+html[data-theme='dark'] .field-label {
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .field-hint {
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .field-error-text {
+  color: #F87171;
+}
+
+html[data-theme='dark'] .field-required {
+  color: #F87171;
+}
+
+html[data-theme='dark'] .form-panel-title h2 {
+  color: var(--page-title);
+}
+
+html[data-theme='dark'] .form-panel-title p {
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .toggle-label {
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .toggle-switch-slider {
+  background: #555555;
+}
+
+html[data-theme='dark'] .toggle-switch input:checked + .toggle-switch-slider {
+  background: var(--app-text);
+}
+
+html[data-theme='dark'] .custom-checkbox-mark {
+  border-color: #555555;
+  background: var(--card-bg);
+}
+
+html[data-theme='dark'] .custom-checkbox input:checked + .custom-checkbox-mark {
+  background: var(--app-text);
+  border-color: var(--app-text);
+}
+
+html[data-theme='dark'] .check-label {
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .unregistered-note {
+  background: var(--table-head-bg);
+  border-color: var(--card-border);
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .advance-full-info {
+  background: var(--table-head-bg);
+  border-color: var(--card-border);
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .advance-full-info strong {
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .package-card {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .package-card:hover:not(.active) {
+  border-color: #555555;
+}
+
+html[data-theme='dark'] .package-card.active {
+  border-color: var(--app-text);
+}
+
+html[data-theme='dark'] .package-card-icon {
+  background: var(--table-head-bg);
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .package-card.active .package-card-icon {
+  background: var(--app-text);
+  color: var(--card-bg);
+}
+
+html[data-theme='dark'] .package-card-label {
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .package-card-price {
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .item-editor-head {
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .item-editor-empty {
+  background: var(--table-head-bg);
+  border-color: var(--card-border);
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .item-editor-row {
+  background: var(--input-bg);
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .item-editor-row:hover {
+  border-color: #555555;
+}
+
+html[data-theme='dark'] .item-editor-amount {
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .segmented {
+  background: var(--table-head-bg);
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .segmented button {
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .segmented button.active {
+  background: var(--input-bg);
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .chip {
+  background: var(--input-bg);
+  border-color: var(--card-border);
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .chip.active {
+  background: var(--app-text);
+  border-color: var(--app-text);
+  color: var(--card-bg);
+}
+
+html[data-theme='dark'] .chip:hover:not(.active) {
+  border-color: #555555;
+}
+
+html[data-theme='dark'] .icon-btn {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .icon-btn:hover {
+  background: var(--table-head-bg);
+  color: var(--app-text);
+  border-color: #555555;
+}
+
+html[data-theme='dark'] .form-section {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .form-section.is-open {
+  border-color: #555555;
+}
+
+html[data-theme='dark'] .form-section-header:hover {
+  background: var(--table-head-bg);
+}
+
+html[data-theme='dark'] .preview-save-bar {
+  background: var(--card-bg);
+  border-top-color: var(--card-border);
+}
+
+html[data-theme='dark'] .bill-details-info .card {
+  background: var(--card-bg);
+}
+
+html[data-theme='dark'] .detail-label {
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .detail-value {
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .detail-row {
+  border-bottom-color: #333333;
+}
+
+/* ---------- SHARED COMPONENT SURFACES ---------- */
+.card,
+.db-card,
+.stat-card,
+.settings-section,
+.data-table,
+.form-card,
+.card-preview {
+  border-color: var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+.card,
+.db-card,
+.stat-card,
+.settings-section,
+.form-card,
+.card-preview,
+.modal-content,
+.customer-profile-panel {
+  background: var(--card-bg);
+  color: var(--app-text);
+}
+
+.btn,
+.input,
+.search-input,
+.icon-btn,
+.chip,
+.package-card,
+.settings-tab,
+.report-tab,
+.db-date-btn,
+.db-action-btn {
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.btn-primary,
+.login-btn,
+.icon-btn-active {
+  background: var(--app-text) !important;
+  border-color: var(--app-text) !important;
+  color: var(--card-bg) !important;
+}
+
+.btn-primary:hover:not(:disabled),
+.login-btn:hover:not(:disabled),
+.icon-btn-active:hover {
+  background: #000000 !important;
+  border-color: #000000 !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  transform: translateY(-1px);
+}
+
+.btn-outline,
+.icon-btn,
+.input,
+.search-input,
+.chip,
+.package-card {
+  border-color: var(--input-border);
+  color: var(--input-text);
+  background: var(--input-bg);
+}
+
+.btn-outline:hover:not(:disabled),
+.icon-btn:hover,
+.chip:hover,
+.package-card:hover {
+  border-color: var(--focus-color);
+  background: var(--table-row-hover);
+}
+
+.input:focus,
+.search-input:focus,
+button:focus-visible,
+a:focus-visible {
+  outline: none;
+  border-color: var(--focus-color);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.form-section,
+.item-editor-row,
+.item-editor-empty,
+.segmented,
+.filters-panel,
+.report-tabs,
+.profile-stat {
+  background: var(--table-head-bg);
+  border-color: var(--card-border);
+}
+
+.form-section-header:hover,
+.settings-tab:hover,
+.report-tab:hover,
+.db-date-btn:hover {
+  background: var(--table-row-hover);
+}
+
+.form-section.is-open,
+.package-card.active,
+.chip.active,
+.settings-tab-active,
+.report-tab-active {
+  border-color: var(--focus-color);
+  color: var(--app-text);
+}
+
+.package-card.active,
+.chip.active,
+.settings-tab-active,
+.report-tab-active {
+  background: var(--table-head-bg);
+  box-shadow: inset 0 -2px 0 var(--app-text);
+}
+
+.modal-overlay,
+.customer-profile-overlay,
+.sidebar-overlay {
+  background: var(--overlay-bg);
+  backdrop-filter: blur(3px);
+}
+
+::selection {
+  background: var(--app-text);
+  color: var(--card-bg);
+}
+
+/* ---------- THEME TOGGLE BUTTON ---------- */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #BDBDBD;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #F5F5F5;
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+.theme-toggle-icon {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+}
+
+html[data-theme='dark'] .theme-toggle {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- LOGOUT BUTTON ANIMATION ---------- */
+.sidebar-logout {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.sidebar-logout::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 8px;
+  z-index: -1;
+}
+
+.sidebar-logout:hover::before {
+  opacity: 1;
+}
+
+.sidebar-logout:hover {
+  color: #fff !important;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.sidebar-logout:active {
+  transform: translateX(2px) scale(0.97);
+}
+
+.sidebar-logout svg {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sidebar-logout:hover svg {
+  transform: translateX(3px);
+}
+
+@keyframes logoutPulse {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.sidebar-logout:focus-visible {
+  outline: 2px solid #EF4444;
+  outline-offset: 2px;
+  animation: logoutPulse 1.5s ease;
+}
+
+/* ========== LOGO STYLES ========== */
+.sidebar-brand-logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: transparent;
+  padding: 0;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sidebar-brand-logo:hover {
+  transform: scale(1.08) rotate(2deg);
+}
+
+.sidebar-brand-logo-collapsed {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: transparent;
+  padding: 0;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
+}
+
+.mobile-topbar-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: transparent;
+  padding: 0;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25));
+}
+
+.login-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: transparent;
+  padding: 0;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.25));
+  margin-bottom: 16px;
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}

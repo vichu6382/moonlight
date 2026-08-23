@@ -4,8 +4,7 @@
   "private": true,
   "description": "Moon Light Resort Management System",
   "scripts": {
-    "build:frontend": "cd frontend && npm install && npm run build",
-    "vercel-build": "npm run build:frontend"
+    "vercel-build": "cd frontend && npm install && npm run build"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

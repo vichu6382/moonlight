@@ -1,7 +1,7 @@
 {
   "version": 2,
   "installCommand": "npm install && npm --prefix frontend install",
-  "buildCommand": "npm --prefix frontend run build",
+  "buildCommand": "npx --prefix frontend vite build",
   "builds": [
     {
       "src": "api/index.js",

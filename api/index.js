@@ -1,12 +1,24 @@
-const connectDB = require('../backend/config/db');
-const app = require('../backend/server');
+const connectDB = require('../config/db');
+const app = require('../server');
 
-let isConnected = false;
+let dbInitialized = false;
 
 module.exports = async (req, res) => {
-  if (!isConnected) {
-    await connectDB();
-    isConnected = true;
+  try {
+    if (!dbInitialized) {
+      await connectDB();
+      dbInitialized = true;
+    }
+
+    return app(req, res);
+  } catch (error) {
+    console.error(
+      'Vercel function error:',
+      error.message
+    );
+
+    return res.status(500).json({
+      message: 'Internal server error'
+    });
   }
-  return app(req, res);
 };

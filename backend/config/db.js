@@ -9,24 +9,62 @@ async function connectDB() {
       throw new Error('MONGODB_URI is not configured');
     }
 
-    if (process.env.MONGODB_DNS_SERVERS) {
-      dns.setServers(process.env.MONGODB_DNS_SERVERS.split(',').map((server) => server.trim()));
+    // Already connected
+    if (
+      isConnected &&
+      mongoose.connection.readyState === 1
+    ) {
+      return mongoose.connection;
     }
 
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      authSource: process.env.MONGODB_AUTH_SOURCE || 'admin'
-    });
+    // Custom DNS servers if configured
+    if (process.env.MONGODB_DNS_SERVERS) {
+      const servers = process.env.MONGODB_DNS_SERVERS
+        .split(',')
+        .map((server) => server.trim())
+        .filter(Boolean);
+
+      if (servers.length > 0) {
+        dns.setServers(servers);
+      }
+    }
+
+    const conn = await mongoose.connect(
+      process.env.MONGODB_URI,
+      {
+        authSource:
+          process.env.MONGODB_AUTH_SOURCE || 'admin'
+      }
+    );
+
     isConnected = true;
-    console.log(`MongoDB connected: ${conn.connection.host}`);
+
+    console.log(
+      `MongoDB connected: ${conn.connection.host}`
+    );
+
+    return conn;
   } catch (err) {
     isConnected = false;
-    console.warn('MongoDB connection failed. Running in fallback mode with admin credentials.');
-    console.warn('Error:', err.message);
+
+    console.warn(
+      'MongoDB connection failed. Running in fallback mode with admin credentials.'
+    );
+
+    console.warn(
+      'Error:',
+      err.message
+    );
+
+    return null;
   }
 }
 
 function isDBConnected() {
-  return isConnected;
+  return (
+    isConnected &&
+    mongoose.connection.readyState === 1
+  );
 }
 
 module.exports = connectDB;

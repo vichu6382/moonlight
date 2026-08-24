@@ -1,84 +1,283 @@
 require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
+
 const connectDB = require('./config/db');
+
+const authRoutes = require('./routes/auth');
+const invoiceRoutes = require('./routes/invoices');
+const customerRoutes = require('./routes/customers');
+const statsRoutes = require('./routes/stats');
+const activitiesRoutes = require('./routes/activities');
+const settingsRoutes = require('./routes/settings');
+const backupRoutes = require('./routes/backup');
 
 const app = express();
 
-app.use(helmet());
-app.use(cookieParser());
-app.use(express.json({ limit: '10mb' }));
+/* =========================
+   Middleware
+========================= */
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type'],
-  maxAge: 86400
-}));
+app.use(helmet());
+
+app.use(cookieParser());
+
+app.use(
+  express.json({
+    limit: '10mb'
+  })
+);
+
+app.use(
+  express.urlencoded({
+    extended: true,
+    limit: '10mb'
+  })
+);
+
+/* =========================
+   CORS
+========================= */
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests without origin
+      // Example: server-to-server / Postman
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(
+        new Error('Not allowed by CORS')
+      );
+    },
+
+    credentials: true,
+
+    methods: [
+      'GET',
+      'POST',
+      'PUT',
+      'PATCH',
+      'DELETE',
+      'OPTIONS'
+    ],
+
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization'
+    ],
+
+    maxAge: 86400
+  })
+);
+
+/* =========================
+   Rate Limiters
+========================= */
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
+
   max: 5,
-  message: { message: 'Too many login attempts. Please try again later.' },
+
+  message: {
+    message:
+      'Too many login attempts. Please try again later.'
+  },
+
   standardHeaders: true,
+
   legacyHeaders: false
 });
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
+
   max: 100,
-  message: { message: 'Too many requests. Please try again later.' },
+
+  message: {
+    message:
+      'Too many requests. Please try again later.'
+  },
+
   standardHeaders: true,
+
   legacyHeaders: false
 });
 
-app.use('/api/auth/login', loginLimiter);
-app.use('/api', apiLimiter);
+/* =========================
+   Apply Rate Limits
+========================= */
 
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/invoices', require('./routes/invoices'));
-app.use('/api/customers', require('./routes/customers'));
-app.use('/api/stats', require('./routes/stats'));
-app.use('/api/activities', require('./routes/activities'));
-app.use('/api/settings', require('./routes/settings'));
-app.use('/api/backup', require('./routes/backup'));
+app.use(
+  '/api/auth/login',
+  loginLimiter
+);
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
+app.use(
+  '/api',
+  apiLimiter
+);
 
-app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err);
-  res.status(500).json({ message: 'Internal server error' });
-});
+/* =========================
+   Routes
+========================= */
 
-module.exports = app;
+app.use(
+  '/api/auth',
+  authRoutes
+);
 
-if (process.env.VERCEL !== '1') {
-  const PORT = process.env.PORT || 5001;
+app.use(
+  '/api/invoices',
+  invoiceRoutes
+);
 
-  async function startServer() {
-    await connectDB();
-    const server = app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
+app.use(
+  '/api/customers',
+  customerRoutes
+);
 
-    server.on('error', (err) => {
-      if (err.code === 'EADDRINUSE') {
-        console.error(`Port ${PORT} is already in use. Stop the existing backend or set a different PORT.`);
-      } else {
-        console.error('Server listen error:', err.message);
-      }
-      process.exit(1);
+app.use(
+  '/api/stats',
+  statsRoutes
+);
+
+app.use(
+  '/api/activities',
+  activitiesRoutes
+);
+
+app.use(
+  '/api/settings',
+  settingsRoutes
+);
+
+app.use(
+  '/api/backup',
+  backupRoutes
+);
+
+/* =========================
+   Health Check
+========================= */
+
+app.get(
+  '/api/health',
+  (req, res) => {
+    res.status(200).json({
+      status: 'ok',
+      message: 'Moonlight Resort API is running',
+      timestamp: new Date().toISOString()
     });
   }
+);
 
-  startServer().catch((err) => {
-    console.error('Server startup failed:', err.message);
-    process.exit(1);
-  });
+/* =========================
+   404 API Handler
+========================= */
+
+app.use(
+  '/api',
+  (req, res) => {
+    res.status(404).json({
+      message: 'API route not found'
+    });
+  }
+);
+
+/* =========================
+   Error Handler
+========================= */
+
+app.use(
+  (err, req, res, next) => {
+    console.error(
+      'Unhandled error:',
+      err.message
+    );
+
+    res.status(
+      err.status || 500
+    ).json({
+      message:
+        err.message ||
+        'Internal server error'
+    });
+  }
+);
+
+/* =========================
+   Local Server
+========================= */
+
+if (process.env.VERCEL !== '1') {
+  const PORT =
+    process.env.PORT || 5001;
+
+  async function startServer() {
+    try {
+      await connectDB();
+
+      const server = app.listen(
+        PORT,
+        () => {
+          console.log(
+            `Server running on port ${PORT}`
+          );
+        }
+      );
+
+      server.on(
+        'error',
+        (err) => {
+          if (
+            err.code ===
+            'EADDRINUSE'
+          ) {
+            console.error(
+              `Port ${PORT} is already in use.`
+            );
+          } else {
+            console.error(
+              'Server listen error:',
+              err.message
+            );
+          }
+
+          process.exit(1);
+        }
+      );
+    } catch (err) {
+      console.error(
+        'Server startup failed:',
+        err.message
+      );
+
+      process.exit(1);
+    }
+  }
+
+  startServer();
 }
+
+/* =========================
+   Export for Vercel
+========================= */
+
+module.exports = app;

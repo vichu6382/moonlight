@@ -1,6 +1,5 @@
 ﻿require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 const mongoose = require('mongoose');
-const dns = require('dns');
 const readline = require('readline');
 const User = require('../models/User');
 const Settings = require('../models/Settings');
@@ -16,10 +15,6 @@ function ask(question) {
 
 async function seed() {
   try {
-    if (process.env.MONGODB_DNS_SERVERS) {
-      dns.setServers(process.env.MONGODB_DNS_SERVERS.split(',').map((server) => server.trim()));
-    }
-
     await mongoose.connect(process.env.MONGODB_URI, {
       authSource: process.env.MONGODB_AUTH_SOURCE || 'admin'
     });

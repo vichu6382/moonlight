@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const dns = require('dns');
 
 let isConnected = false;
 
@@ -15,18 +14,6 @@ async function connectDB() {
       mongoose.connection.readyState === 1
     ) {
       return mongoose.connection;
-    }
-
-    // Custom DNS servers if configured
-    if (process.env.MONGODB_DNS_SERVERS) {
-      const servers = process.env.MONGODB_DNS_SERVERS
-        .split(',')
-        .map((server) => server.trim())
-        .filter(Boolean);
-
-      if (servers.length > 0) {
-        dns.setServers(servers);
-      }
     }
 
     const conn = await mongoose.connect(

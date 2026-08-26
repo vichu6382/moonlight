@@ -14,7 +14,19 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let cancelled = false;
 
-    api.getMe()
+    async function restoreSession() {
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        try {
+          return await api.getMe();
+        } catch (err) {
+          if (err.status < 500 || attempt === 2) throw err;
+          await new Promise((resolve) => setTimeout(resolve, 800 * (attempt + 1)));
+        }
+      }
+      return null;
+    }
+
+    restoreSession()
       .then((data) => {
         if (!cancelled) setUser(data.user);
       })

@@ -16,7 +16,7 @@ async function auth(req, res, next) {
         req.user = { _id: 'admin-fallback', email: process.env.ADMIN_EMAIL, name: process.env.ADMIN_NAME || 'Owner', role: 'owner' };
         return next();
       }
-      return res.status(401).json({ message: 'User not found' });
+      return res.status(503).json({ message: 'Database temporarily unavailable' });
     }
 
     const user = await User.findById(decoded.userId).select('-password');

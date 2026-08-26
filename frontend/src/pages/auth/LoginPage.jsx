@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { LogIn } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { PasswordInput } from '../../components/common/PasswordInput';
 import toast from 'react-hot-toast';
 import logoPng from '../../assets/moonlight_logo.png';
 
@@ -33,14 +35,30 @@ export function LoginPage() {
 
   return (
     <div className="login-page">
-      <div className="login-card">
-        <div className="login-brand">
+      <motion.div
+        className="login-card"
+        initial={{ opacity: 0, y: 20, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+      >
+        <motion.div
+          className="login-brand"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.3 }}
+        >
           <img src={logoPng} alt="Moon Light Resort" className="login-logo" />
           <h1>Moon Light Resort</h1>
           <p>Billing Management System</p>
-        </div>
+        </motion.div>
 
-        <form onSubmit={handleSubmit} className="login-form">
+        <motion.form
+          onSubmit={handleSubmit}
+          className="login-form"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+        >
           <div className="login-field">
             <label>Email</label>
             <input
@@ -55,8 +73,7 @@ export function LoginPage() {
           </div>
           <div className="login-field">
             <label>Password</label>
-            <input
-              type="password"
+            <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter password"
@@ -64,7 +81,13 @@ export function LoginPage() {
               disabled={loading}
             />
           </div>
-          <button type="submit" className="login-btn" disabled={loading}>
+          <motion.button
+            type="submit"
+            className="login-btn"
+            disabled={loading}
+            whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.1 }}
+          >
             {loading ? (
               <span className="login-btn-loading">Signing in...</span>
             ) : (
@@ -73,9 +96,9 @@ export function LoginPage() {
                 Sign In
               </>
             )}
-          </button>
-        </form>
-      </div>
+          </motion.button>
+        </motion.form>
+      </motion.div>
     </div>
   );
 }

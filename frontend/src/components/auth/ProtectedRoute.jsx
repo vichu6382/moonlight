@@ -1,4 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 
 export function ProtectedRoute() {
@@ -7,7 +8,26 @@ export function ProtectedRoute() {
   if (loading) {
     return (
       <div className="auth-loading">
-        <div className="auth-loading-spinner" />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}
+        >
+          <motion.div
+            className="auth-loading-spinner"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
+          />
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.2 }}
+            style={{ color: 'var(--app-muted)', fontSize: '13px', fontWeight: 500 }}
+          >
+            Loading...
+          </motion.span>
+        </motion.div>
       </div>
     );
   }

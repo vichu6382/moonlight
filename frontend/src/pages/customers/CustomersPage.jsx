@@ -5,6 +5,7 @@ import * as api from '../../services/apiService';
 import { formatINR, formatDateDDMMYYYY } from '../../utils/format';
 import { EmptyState } from '../../components/common/EmptyState';
 import { SearchInput } from '../../components/common/SearchInput';
+import { AnimatedPage } from '../../components/common/AnimatedPage';
 
 export function CustomersPage() {
   const navigate = useNavigate();
@@ -88,7 +89,7 @@ export function CustomersPage() {
   }
 
   return (
-    <div className="page-container">
+    <AnimatedPage className="page-container">
       <div className="page-header">
         <div>
           <h1 className="page-title">Customers</h1>
@@ -194,6 +195,6 @@ export function CustomersPage() {
           </div>
         </div>
       )}
-    </div>
+    </AnimatedPage>
   );
 }

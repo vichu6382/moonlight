@@ -28,21 +28,21 @@
 /* ---------- DARK MODE ---------- */
 html[data-theme='dark'] {
   --app-bg: #0b0b0b;
-  --app-text: #eeeeee;
+  --app-text: #f0f0f0;
   --app-muted: #a0a0a0;
   --card-bg: #171717;
-  --card-border: #303030;
+  --card-border: #2a2a2a;
   --card-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-  --input-bg: #202020;
-  --input-border: #4a4a4a;
+  --input-bg: #1e1e1e;
+  --input-border: #3a3a3a;
   --input-text: #f5f5f5;
-  --table-head-bg: #1d1d1d;
-  --table-row-hover: #252525;
-  --table-border: #303030;
+  --table-head-bg: #1a1a1a;
+  --table-row-hover: #222222;
+  --table-border: #2a2a2a;
   --page-title: #fafafa;
   --stat-value: #fafafa;
-  --focus-color: #f0f0f0;
-  --focus-ring: rgba(255, 255, 255, 0.16);
+  --focus-color: #e0e0e0;
+  --focus-ring: rgba(255, 255, 255, 0.2);
   --overlay-bg: rgba(0, 0, 0, 0.7);
   --scrollbar-track: #171717;
   --scrollbar-thumb: #555555;
@@ -492,7 +492,269 @@ html[data-theme='dark'] .detail-value {
 }
 
 html[data-theme='dark'] .detail-row {
-  border-bottom-color: #333333;
+  border-bottom-color: #2a2a2a;
+}
+
+/* ---------- DARK MODE — STATUS BADGES ---------- */
+html[data-theme='dark'] .status-paid {
+  background: #052e16;
+  color: #34d399;
+}
+html[data-theme='dark'] .status-paid .status-badge-dot { background: #34d399; }
+
+html[data-theme='dark'] .status-partial {
+  background: #422006;
+  color: #fbbf24;
+}
+html[data-theme='dark'] .status-partial .status-badge-dot { background: #fbbf24; }
+
+html[data-theme='dark'] .status-unpaid {
+  background: #450a0a;
+  color: #f87171;
+}
+html[data-theme='dark'] .status-unpaid .status-badge-dot { background: #f87171; }
+
+/* ---------- DARK MODE — LOGIN PAGE ---------- */
+html[data-theme='dark'] .login-page {
+  background: #050505;
+}
+
+html[data-theme='dark'] .login-field input {
+  background: #1e1e1e;
+  border-color: #3a3a3a;
+  color: #f5f5f5;
+}
+
+html[data-theme='dark'] .login-field input:focus {
+  border-color: #e0e0e0;
+  background: #222222;
+}
+
+html[data-theme='dark'] .login-field label {
+  color: #c0c0c0;
+}
+
+html[data-theme='dark'] .login-btn-loading {
+  color: #a5b4fc;
+}
+
+/* ---------- DARK MODE — SETTINGS DANGER SECTION ---------- */
+html[data-theme='dark'] .settings-section-danger {
+  border-color: #7f1d1d;
+  background: #1c0a0a;
+}
+
+html[data-theme='dark'] .settings-section-danger h4 {
+  color: #f87171;
+}
+
+html[data-theme='dark'] .settings-section-danger p {
+  color: #d4a0a0;
+}
+
+/* ---------- DARK MODE — CONFIRM MESSAGE ---------- */
+html[data-theme='dark'] .confirm-message {
+  color: #d0d0d0;
+}
+
+/* ---------- DARK MODE — BILL DETAILS ---------- */
+html[data-theme='dark'] .detail-row-total {
+  background: #1e1e1e;
+}
+
+html[data-theme='dark'] .detail-row-total .detail-label,
+html[data-theme='dark'] .detail-row-total .detail-value {
+  color: #f0f0f0;
+}
+
+html[data-theme='dark'] .bill-details-info .card {
+  border-color: #2a2a2a;
+}
+
+html[data-theme='dark'] .bill-details-preview .card-preview {
+  border-color: #2a2a2a;
+}
+
+/* ---------- DARK MODE — BILL PREVIEW ---------- */
+html[data-theme='dark'] .bill-preview-col .card {
+  border-color: #2a2a2a;
+}
+
+html[data-theme='dark'] .bill-preview-col .preview-scroll {
+  background: #0a0a0a;
+}
+
+html[data-theme='dark'] .preview-scroll {
+  background: #0a0a0a;
+}
+
+html[data-theme='dark'] .preview-toolbar {
+  background: var(--card-bg);
+  border-bottom-color: #2a2a2a;
+}
+
+html[data-theme='dark'] .preview-save-bar {
+  background: var(--card-bg);
+  border-top-color: #2a2a2a;
+}
+
+html[data-theme='dark'] .preview-toolbar-title {
+  color: #e0e0e0;
+}
+
+/* ---------- DARK MODE — CHARTS ---------- */
+html[data-theme='dark'] .report-summary-strip .report-stat {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .summary-strip .summary-item {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+/* ---------- DARK MODE — PAGINATION ---------- */
+html[data-theme='dark'] .pagination-bar {
+  border-top-color: #2a2a2a;
+}
+
+/* ---------- DARK MODE — EMPTY STATE ---------- */
+html[data-theme='dark'] .empty-state-icon {
+  background: #1e1e1e;
+  color: #888888;
+}
+
+html[data-theme='dark'] .empty-state-message {
+  color: #999999;
+}
+
+/* ---------- DARK MODE — TABLE HEADERS ---------- */
+html[data-theme='dark'] .data-table thead {
+  background: #141414;
+}
+
+html[data-theme='dark'] .data-table th {
+  color: #b0b0b0;
+  border-bottom-color: #2a2a2a;
+}
+
+html[data-theme='dark'] .data-table td {
+  color: #e0e0e0;
+  border-bottom-color: #252525;
+}
+
+/* ---------- DARK MODE — FORM SECTIONS ---------- */
+html[data-theme='dark'] .form-section {
+  background: var(--card-bg);
+  border-color: #2a2a2a;
+}
+
+html[data-theme='dark'] .form-section.is-open {
+  border-color: #444444;
+}
+
+html[data-theme='dark'] .form-section-body {
+  background: var(--card-bg);
+  border-top-color: #2a2a2a;
+}
+
+html[data-theme='dark'] .form-section-header:hover {
+  background: #1e1e1e;
+}
+
+/* ---------- DARK MODE — BUTTONS ---------- */
+html[data-theme='dark'] .btn-outline {
+  border-color: #3a3a3a;
+  color: #d0d0d0;
+}
+
+html[data-theme='dark'] .btn-outline:hover:not(:disabled) {
+  background: #222222;
+  border-color: #555555;
+}
+
+html[data-theme='dark'] .btn-danger {
+  background: #dc2626;
+  color: #fff;
+}
+
+html[data-theme='dark'] .btn-danger:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+/* ---------- DARK MODE — CUSTOMER PROFILE ---------- */
+html[data-theme='dark'] .customer-profile-panel {
+  background: #141414;
+  border-left: 1px solid #2a2a2a;
+}
+
+html[data-theme='dark'] .customer-profile-header h2 {
+  color: #f0f0f0;
+}
+
+html[data-theme='dark'] .profile-stat {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+}
+
+html[data-theme='dark'] .profile-section-title {
+  color: #e0e0e0;
+}
+
+html[data-theme='dark'] .profile-invoice-row {
+  border-color: #2a2a2a;
+}
+
+html[data-theme='dark'] .profile-invoice-row:hover {
+  background: #1e1e1e;
+}
+
+/* ---------- DARK MODE — THEME CARDS ---------- */
+html[data-theme='dark'] .theme-card {
+  background: var(--card-bg);
+  border-color: #2a2a2a;
+}
+
+html[data-theme='dark'] .theme-card:hover {
+  border-color: #555555;
+}
+
+html[data-theme='dark'] .theme-card-active {
+  border-color: #e0e0e0;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+}
+
+html[data-theme='dark'] .theme-card-name {
+  color: #e0e0e0;
+}
+
+html[data-theme='dark'] .theme-card-desc {
+  color: #888888;
+}
+
+html[data-theme='dark'] .theme-card-check {
+  background: #e0e0e0;
+  color: #111111;
+}
+
+/* ---------- DARK MODE — REPORT TABS ---------- */
+html[data-theme='dark'] .report-tab-active {
+  background: #1a1a1a;
+  color: #f0f0f0;
+}
+
+html[data-theme='dark'] .report-tabs {
+  background: #141414;
+}
+
+/* ---------- DARK MODE — FILTERS ---------- */
+html[data-theme='dark'] .filters-panel {
+  background: #141414;
+  border-bottom-color: #2a2a2a;
+}
+
+html[data-theme='dark'] .table-controls {
+  border-bottom-color: #2a2a2a;
 }
 
 /* ---------- SHARED COMPONENT SURFACES ---------- */

@@ -8,6 +8,7 @@ import { filterInvoices } from '../../utils/invoiceHelpers';
 import { formatINR } from '../../utils/format';
 import { exportBillingReportPDF } from '../../utils/billingReportExport';
 import { exportBillingReportExcel } from '../../utils/billingReportExcel';
+import { AnimatedPage } from '../../components/common/AnimatedPage';
 import toast from 'react-hot-toast';
 
 export function ReportsPage() {
@@ -86,7 +87,7 @@ export function ReportsPage() {
   };
 
   return (
-    <div className="page-container">
+    <AnimatedPage className="page-container">
       <div className="page-header">
         <div>
           <h1 className="page-title">Reports</h1>
@@ -232,6 +233,6 @@ export function ReportsPage() {
           </div>
         </div>
       </div>
-    </div>
+    </AnimatedPage>
   );
 }

@@ -533,3 +533,104 @@
 .db-empty .btn {
   margin-top: 8px;
 }
+
+/* ========================================
+   DARK MODE — DASHBOARD
+   ======================================== */
+
+html[data-theme='dark'] .db-page {
+  background: var(--app-bg);
+}
+
+html[data-theme='dark'] .db-stat-card {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .db-stat-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+html[data-theme='dark'] .db-card {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .db-card-header {
+  border-bottom-color: var(--card-border);
+}
+
+html[data-theme='dark'] .db-card-header h3 {
+  color: var(--page-title);
+}
+
+html[data-theme='dark'] .db-card-badge {
+  background: #222222;
+  color: #b0b0b0;
+}
+
+html[data-theme='dark'] .db-date-filters {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .db-date-btn {
+  color: var(--app-muted);
+}
+
+html[data-theme='dark'] .db-date-btn:hover {
+  color: var(--app-text);
+  background: #222222;
+}
+
+html[data-theme='dark'] .db-action-btn {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+html[data-theme='dark'] .db-action-btn:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme='dark'] .db-action-label {
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .db-activity-item {
+  border-bottom-color: #252525;
+}
+
+html[data-theme='dark'] .db-activity-type {
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .db-legend-label {
+  color: var(--app-text);
+}
+
+html[data-theme='dark'] .db-bills-table th {
+  color: var(--app-muted);
+  border-bottom-color: var(--card-border);
+}
+
+html[data-theme='dark'] .db-bills-table td {
+  color: var(--app-text);
+  border-bottom-color: #252525;
+}
+
+html[data-theme='dark'] .db-empty-icon {
+  background: #1e1e1e;
+  color: #888888;
+}
+
+html[data-theme='dark'] .db-empty h2 {
+  color: var(--page-title);
+}
+
+html[data-theme='dark'] .db-error-icon {
+  background: #3b1111;
+}
+
+html[data-theme='dark'] .db-loading {
+  color: var(--app-muted);
+}

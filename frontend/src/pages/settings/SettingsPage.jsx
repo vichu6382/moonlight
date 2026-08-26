@@ -5,6 +5,8 @@ import {
 import * as api from '../../services/apiService';
 import { getThemeList } from '../../themes/invoiceThemes';
 import { ConfirmModal } from '../../components/common/Modal';
+import { PasswordInput } from '../../components/common/PasswordInput';
+import { AnimatedPage } from '../../components/common/AnimatedPage';
 import toast from 'react-hot-toast';
 
 export function SettingsPage() {
@@ -158,7 +160,7 @@ export function SettingsPage() {
   }
 
   return (
-    <div className="page-container">
+    <AnimatedPage className="page-container">
       <div className="page-header">
         <div>
           <h1 className="page-title">Settings</h1>
@@ -375,8 +377,7 @@ export function SettingsPage() {
             <p>This will permanently remove all saved invoices, activity history, and settings. Your owner account will NOT be deleted.</p>
             <div className="field" style={{ marginTop: '16px' }}>
               <label className="field-label"><Key size={12} /> Enter your password to confirm</label>
-              <input
-                type="password"
+              <PasswordInput
                 className="input"
                 placeholder="Enter password"
                 value={clearPassword}
@@ -401,8 +402,7 @@ export function SettingsPage() {
             <p><strong>{importData?.invoices?.length || 0}</strong> invoices will be imported.</p>
             <div className="field" style={{ marginTop: '16px' }}>
               <label className="field-label"><Key size={12} /> Enter your password to confirm</label>
-              <input
-                type="password"
+              <PasswordInput
                 className="input"
                 placeholder="Enter password"
                 value={importPassword}
@@ -415,6 +415,6 @@ export function SettingsPage() {
         confirmText="Import Data"
         danger
       />
-    </div>
+    </AnimatedPage>
   );
 }

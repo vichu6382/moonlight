@@ -14,6 +14,7 @@ import { StatusBadge } from '../../components/common/StatusBadge';
 import { ConfirmModal } from '../../components/common/Modal';
 import { PACKAGE_CONFIG } from '../../data/packageConfig';
 import { SELLER } from '../../data/sellerData';
+import { AnimatedPage } from '../../components/common/AnimatedPage';
 import toast from 'react-hot-toast';
 
 function buildInvoiceData(inv) {
@@ -149,7 +150,7 @@ export function BillDetailsPage() {
   }
 
   return (
-    <div className="page-container">
+    <AnimatedPage className="page-container">
       <div className="page-header">
         <div className="page-header-left">
           <button className="btn btn-outline btn-sm" onClick={() => navigate('/history')}>
@@ -291,6 +292,6 @@ export function BillDetailsPage() {
         confirmText="Delete Invoice"
         danger
       />
-    </div>
+    </AnimatedPage>
   );
 }

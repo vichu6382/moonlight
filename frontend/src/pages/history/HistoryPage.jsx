@@ -11,6 +11,7 @@ import { StatusBadge } from '../../components/common/StatusBadge';
 import { SearchInput } from '../../components/common/SearchInput';
 import { EmptyState } from '../../components/common/EmptyState';
 import { ConfirmModal } from '../../components/common/Modal';
+import { AnimatedPage } from '../../components/common/AnimatedPage';
 import { exportBillingReportPDF } from '../../utils/billingReportExport';
 import { exportBillingReportExcel } from '../../utils/billingReportExcel';
 import toast from 'react-hot-toast';
@@ -157,7 +158,7 @@ export function HistoryPage() {
   }
 
   return (
-    <div className="page-container">
+    <AnimatedPage className="page-container">
       <div className="page-header">
         <div>
           <h1 className="page-title">Billing History</h1>
@@ -361,6 +362,6 @@ export function HistoryPage() {
         confirmText="Delete Invoice"
         danger
       />
-    </div>
+    </AnimatedPage>
   );
 }

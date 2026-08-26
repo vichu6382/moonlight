@@ -11,6 +11,7 @@ import { formatINR } from '../../utils/format';
 import { exportInvoiceToPDF } from '../../utils/pdfExport';
 import { exportInvoiceToExcel } from '../../utils/excelExport';
 import * as api from '../../services/apiService';
+import { AnimatedPage } from '../../components/common/AnimatedPage';
 import toast from 'react-hot-toast';
 
 function defaultForm(invoiceNumber, settings) {
@@ -348,7 +349,7 @@ export function CreateBillPage() {
   if (loading || !form) return <div className="page-container"><div className="page-header"><h1 className="page-title">Loading...</h1></div></div>;
 
   return (
-    <div className="page-container bill-page">
+    <AnimatedPage className="page-container bill-page">
       <div className="bill-layout">
         <section className="bill-form-col">
           <div className="card form-card">
@@ -415,6 +416,6 @@ export function CreateBillPage() {
           </div>
         </section>
       </div>
-    </div>
+    </AnimatedPage>
   );
 }

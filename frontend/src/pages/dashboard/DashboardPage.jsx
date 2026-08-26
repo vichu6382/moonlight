@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
   FileText, DollarSign, CheckCircle, Clock, Receipt, TrendingUp,
   Calendar, BarChart3, FilePlus2, History, Users, ArrowRight
@@ -8,6 +9,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import * as api from '../../services/apiService';
 import { formatINR, formatDateDDMMYYYY } from '../../utils/format';
 import { StatusBadge } from '../../components/common/StatusBadge';
+import { SkeletonCard } from '../../components/common/SkeletonLoader';
+import { AnimatedPage } from '../../components/common/AnimatedPage';
 
 const STAT_CARDS = [
   { key: 'totalBills', label: 'Total Bills', icon: FileText, format: false, color: '#4F46E5' },
@@ -138,10 +141,22 @@ export function DashboardPage() {
   if (loading) {
     return (
       <div className="db-page">
-        <div className="db-loading">
-          <div className="db-loading-spinner" />
-          <p>Loading dashboard...</p>
-        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.25 }}
+          style={{ padding: '24px' }}
+        >
+          <div style={{ marginBottom: '24px' }}>
+            <div className="skeleton-pulse" style={{ height: '28px', width: '160px', marginBottom: '8px' }} />
+            <div className="skeleton-pulse" style={{ height: '14px', width: '280px' }} />
+          </div>
+          <SkeletonCard count={8} />
+          <div style={{ marginTop: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div className="skeleton-pulse" style={{ height: '320px' }} />
+            <div className="skeleton-pulse" style={{ height: '320px' }} />
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -175,7 +190,7 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="db-page">
+    <AnimatedPage className="db-page">
       {/* Header */}
       <div className="db-header">
         <div className="db-header-left">
@@ -370,6 +385,6 @@ export function DashboardPage() {
           </div>
         </div>
       </div>
-    </div>
+    </AnimatedPage>
   );
 }

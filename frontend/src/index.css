@@ -1,4 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-family: 'Inter', sans-serif;
+  --color-app-bg: #f3f3f3;
+  --color-app-text: #181818;
+  --color-app-muted: #686868;
+  --color-card-bg: #ffffff;
+  --color-card-border: #d8d8d8;
+  --color-input-bg: #ffffff;
+  --color-input-border: #b8b8b8;
+  --color-focus-color: #333333;
+  --color-primary: #4F46E5;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+}
 
 :root {
   font-synthesis: none;
@@ -17,4 +38,68 @@ body,
   margin: 0;
   padding: 0;
   min-height: 100%;
+}
+
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper .input {
+  width: 100%;
+  padding-right: 44px;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: var(--app-muted, #686868);
+  cursor: pointer;
+  border-radius: var(--radius-sm, 6px);
+  transition: color 0.18s ease, background-color 0.18s ease;
+}
+
+.password-toggle-btn:hover {
+  color: var(--app-text, #181818);
+  background: var(--table-row-hover, #f7f7f7);
+}
+
+.password-toggle-btn:focus-visible {
+  outline: 2px solid var(--focus-color, #333);
+  outline-offset: 1px;
+}
+
+html[data-theme='dark'] .password-toggle-btn {
+  color: var(--app-muted, #a0a0a0);
+}
+
+html[data-theme='dark'] .password-toggle-btn:hover {
+  color: var(--app-text, #eeeeee);
+  background: var(--table-row-hover, #252525);
+}
+
+.skeleton-pulse {
+  background: linear-gradient(90deg, var(--card-bg, #e5e7eb) 25%, var(--table-row-hover, #f3f4f6) 50%, var(--card-bg, #e5e7eb) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md, 10px);
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+html[data-theme='dark'] .skeleton-pulse {
+  background: linear-gradient(90deg, #252525 25%, #2a2a2a 50%, #252525 75%);
+  background-size: 200% 100%;
 }

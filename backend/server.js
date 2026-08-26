@@ -188,6 +188,16 @@ app.get(
   }
 );
 
+app.get(
+  '/',
+  (req, res) => {
+    res.status(200).json({
+      status: 'ok',
+      message: 'Moonlight Resort API is running'
+    });
+  }
+);
+
 /* =========================
    404 API Handler
 ========================= */

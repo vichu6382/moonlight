@@ -1,4 +1,7 @@
-const API_BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+const productionApi = window.location.hostname.endsWith('vercel.app')
+  ? 'https://moonlightbckend.vercel.app/api'
+  : '/api';
+const API_BASE = (import.meta.env.VITE_API_URL || productionApi).replace(/\/+$/, '');
 
 async function request(path, options = {}) {
   const res = await fetch(`${API_BASE}${path}`, {

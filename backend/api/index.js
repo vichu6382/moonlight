@@ -1,3 +1,10 @@
 const app = require('../server');
+const connectDB = require('../config/db');
 
-module.exports = app;
+let dbPromise;
+
+module.exports = async (req, res) => {
+	dbPromise ||= connectDB();
+	await dbPromise;
+	return app(req, res);
+};

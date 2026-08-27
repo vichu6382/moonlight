@@ -1,25 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-family: 'Inter', sans-serif;
-  --color-app-bg: #f3f3f3;
-  --color-app-text: #181818;
-  --color-app-muted: #686868;
-  --color-card-bg: #ffffff;
-  --color-card-border: #d8d8d8;
-  --color-input-bg: #ffffff;
-  --color-input-border: #b8b8b8;
-  --color-focus-color: #333333;
-  --color-primary: #4F46E5;
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --color-danger: #EF4444;
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* ── Primary Palette ── */
+  --color-primary: #2563EB;
+  --color-primary-hover: #1D4ED8;
+  --color-primary-light: #EFF6FF;
+
+  /* ── Surfaces ── */
+  --color-app-bg: #F8FAFC;
+  --color-app-text: #0F172A;
+  --color-app-muted: #64748B;
+  --color-card-bg: #FFFFFF;
+  --color-card-border: #E2E8F0;
+  --color-input-bg: #FFFFFF;
+  --color-input-border: #CBD5E1;
+
+  /* ── Focus ── */
+  --color-focus-color: #2563EB;
+
+  /* ── Semantic ── */
+  --color-success: #059669;
+  --color-warning: #D97706;
+  --color-danger: #DC2626;
+  --color-info: #0284C7;
+
+  /* ── Radius Scale ── */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 18px;
 }
+
+/* ── Base Resets ── */
 
 :root {
   font-synthesis: none;
@@ -32,6 +47,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html,
 body,
 #root {
@@ -39,6 +58,8 @@ body,
   padding: 0;
   min-height: 100%;
 }
+
+/* ── Password Input ── */
 
 .password-input-wrapper {
   position: relative;
@@ -62,35 +83,37 @@ body,
   height: 36px;
   border: none;
   background: transparent;
-  color: var(--app-muted, #686868);
+  color: var(--app-muted, #64748B);
   cursor: pointer;
   border-radius: var(--radius-sm, 6px);
   transition: color 0.18s ease, background-color 0.18s ease;
 }
 
 .password-toggle-btn:hover {
-  color: var(--app-text, #181818);
-  background: var(--table-row-hover, #f7f7f7);
+  color: var(--app-text, #0F172A);
+  background: var(--table-row-hover, #F8FAFC);
 }
 
 .password-toggle-btn:focus-visible {
-  outline: 2px solid var(--focus-color, #333);
+  outline: 2px solid var(--focus-color, #2563EB);
   outline-offset: 1px;
 }
 
 html[data-theme='dark'] .password-toggle-btn {
-  color: var(--app-muted, #a0a0a0);
+  color: var(--app-muted, #94A3B8);
 }
 
 html[data-theme='dark'] .password-toggle-btn:hover {
-  color: var(--app-text, #eeeeee);
-  background: var(--table-row-hover, #252525);
+  color: var(--app-text, #F1F5F9);
+  background: var(--table-row-hover, #1E293B);
 }
 
+/* ── Skeleton Loader ── */
+
 .skeleton-pulse {
-  background: linear-gradient(90deg, var(--card-bg, #e5e7eb) 25%, var(--table-row-hover, #f3f4f6) 50%, var(--card-bg, #e5e7eb) 75%);
+  background: linear-gradient(90deg, var(--card-border, #E2E8F0) 25%, var(--table-row-hover, #F1F5F9) 50%, var(--card-border, #E2E8F0) 75%);
   background-size: 200% 100%;
-  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
   border-radius: var(--radius-md, 10px);
 }
 
@@ -100,6 +123,13 @@ html[data-theme='dark'] .password-toggle-btn:hover {
 }
 
 html[data-theme='dark'] .skeleton-pulse {
-  background: linear-gradient(90deg, #252525 25%, #2a2a2a 50%, #252525 75%);
+  background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%);
   background-size: 200% 100%;
+}
+
+/* ── Selection ── */
+
+::selection {
+  background: var(--primary, #2563EB);
+  color: #FFFFFF;
 }

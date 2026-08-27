@@ -3,24 +3,37 @@ import { getLogoBase64 } from './logoHelper';
 import { formatDateDDMMYYYY, downloadFileName } from './format';
 import { numberToWords } from './numberToWords';
 
-const INDIGO = '4338CA';
-const INDIGO_DARK = '312E81';
-const GOLD = 'F59E0B';
+// Modern Coastal Calm Brand Palette for Excel
+const BRAND_NAVY = '0F172A';
+const BRAND_BLUE = '2563EB';
+const BRAND_BLUE_LIGHT = 'EFF6FF';
+const ACCENT_GOLD = 'D97706';
 const GOLD_TINT = 'FFFBEB';
-const LAVENDER = 'EEF2FF';
-const LIGHT_BG = 'F8FAFF';
-const BORDER = { style: 'thin', color: { argb: 'FFC7CBD9' } };
-const CURRENCY = '"₹"#,##0.00';
+const SUCCESS_GREEN = '059669';
+const SUCCESS_LIGHT = 'ECFDF5';
+const DANGER_RED = 'DC2626';
+const TEXT_DARK = '0F172A';
+const TEXT_MUTED = '64748B';
+const BORDER_COLOR = 'E2E8F0';
+
+const BORDER_THIN = { style: 'thin', color: { argb: 'FF' + BORDER_COLOR } };
+const BORDER_DOUBLE_BOTTOM = {
+  top: BORDER_THIN,
+  left: BORDER_THIN,
+  right: BORDER_THIN,
+  bottom: { style: 'double', color: { argb: 'FF' + BRAND_NAVY } }
+};
+const CURRENCY_FMT = '"₹"#,##0.00';
 
 const COLS = [
-  { header: '', key: 'a', width: 30 },
+  { header: '', key: 'a', width: 32 },
   { header: '', key: 'b', width: 14 },
   { header: '', key: 'c', width: 14 },
   { header: '', key: 'd', width: 16 },
   { header: '', key: 'e', width: 16 },
-  { header: '', key: 'f', width: 14 },
-  { header: '', key: 'g', width: 14 },
-  { header: '', key: 'h', width: 14 }
+  { header: '', key: 'f', width: 15 },
+  { header: '', key: 'g', width: 15 },
+  { header: '', key: 'h', width: 16 }
 ];
 
 function merge(ws, r1, c1, r2, c2) {
@@ -30,13 +43,20 @@ function merge(ws, r1, c1, r2, c2) {
 function cell(ws, row, col, value, opts = {}) {
   const c = ws.getCell(row, col);
   c.value = value;
-  const color = (opts.color || '1F2937').replace('#', 'FF');
+  const color = (opts.color || TEXT_DARK).replace('#', 'FF');
   c.font = {
     bold: !!opts.bold,
-    size: opts.size || 10.5,
-    color: { argb: color }
+    size: opts.size || 10,
+    color: { argb: color },
+    name: 'Segoe UI'
   };
-  if (opts.fill) c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: opts.fill.replace('#', 'FF') } };
+  if (opts.fill) {
+    c.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF' + opts.fill.replace('#', '') }
+    };
+  }
   c.alignment = {
     horizontal: opts.align || 'left',
     vertical: 'middle',
@@ -44,7 +64,9 @@ function cell(ws, row, col, value, opts = {}) {
   };
   if (opts.format) c.numFmt = opts.format;
   if (opts.border !== false) {
-    c.border = { top: BORDER, bottom: BORDER, left: BORDER, right: BORDER };
+    c.border = opts.doubleBottom
+      ? BORDER_DOUBLE_BOTTOM
+      : { top: BORDER_THIN, bottom: BORDER_THIN, left: BORDER_THIN, right: BORDER_THIN };
   }
   if (opts.height) ws.getRow(row).height = opts.height;
   return c;
@@ -53,23 +75,35 @@ function cell(ws, row, col, value, opts = {}) {
 function rangeBorder(ws, r1, c1, r2, c2) {
   for (let r = r1; r <= r2; r++) {
     for (let c = c1; c <= c2; c++) {
-      ws.getCell(r, c).border = { top: BORDER, bottom: BORDER, left: BORDER, right: BORDER };
+      ws.getCell(r, c).border = {
+        top: BORDER_THIN,
+        bottom: BORDER_THIN,
+        left: BORDER_THIN,
+        right: BORDER_THIN
+      };
     }
   }
 }
 
-function band(ws, row, fill, height = 4) {
-  merge(ws, row, 1, row, 8);
-  cell(ws, row, 1, '', { fill, border: false, height });
+function rangeFill(ws, r1, c1, r2, c2, fill) {
+  for (let r = r1; r <= r2; r++) {
+    for (let c = c1; c <= c2; c++) {
+      ws.getCell(r, c).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF' + fill.replace('#', '') }
+      };
+    }
+  }
 }
 
-function headerRow(ws, row, text, height = 24) {
+function headerBand(ws, row, text, height = 24) {
   merge(ws, row, 1, row, 8);
   const c = cell(ws, row, 1, text.toUpperCase(), {
     bold: true,
-    fill: INDIGO,
+    fill: BRAND_NAVY,
     color: 'FFFFFF',
-    size: 11,
+    size: 10.5,
     height,
     align: 'left'
   });
@@ -79,14 +113,14 @@ function headerRow(ws, row, text, height = 24) {
 
 function itemsBlock(ws, startRow, title, items, total, firstLabel = 'Item') {
   let row = startRow;
-  headerRow(ws, row, title.toUpperCase());
+  headerBand(ws, row, title);
   row++;
   merge(ws, row, 1, row, 3);
-  cell(ws, row, 1, firstLabel, { bold: true, fill: LAVENDER, color: INDIGO_DARK, height: 22 });
-  cell(ws, row, 4, 'Qty', { bold: true, fill: LAVENDER, color: INDIGO_DARK, align: 'center' });
-  cell(ws, row, 5, 'Rate', { bold: true, fill: LAVENDER, color: INDIGO_DARK, align: 'right' });
+  cell(ws, row, 1, firstLabel, { bold: true, fill: BRAND_BLUE_LIGHT, color: BRAND_BLUE, height: 22 });
+  cell(ws, row, 4, 'Qty', { bold: true, fill: BRAND_BLUE_LIGHT, color: BRAND_BLUE, align: 'center' });
+  cell(ws, row, 5, 'Rate', { bold: true, fill: BRAND_BLUE_LIGHT, color: BRAND_BLUE, align: 'right' });
   merge(ws, row, 6, row, 8);
-  cell(ws, row, 6, 'Amount', { bold: true, fill: LAVENDER, color: INDIGO_DARK, align: 'right' });
+  cell(ws, row, 6, 'Amount', { bold: true, fill: BRAND_BLUE_LIGHT, color: BRAND_BLUE, align: 'right' });
   rangeBorder(ws, row, 1, row, 8);
   row++;
 
@@ -94,23 +128,23 @@ function itemsBlock(ws, startRow, title, items, total, firstLabel = 'Item') {
     merge(ws, row, 1, row, 3);
     cell(ws, row, 1, item.name || `Item ${idx + 1}`);
     cell(ws, row, 4, Number(item.qty) || 0, { align: 'center' });
-    cell(ws, row, 5, Number(item.rate) || 0, { align: 'right', format: CURRENCY });
+    cell(ws, row, 5, Number(item.rate) || 0, { align: 'right', format: CURRENCY_FMT });
     merge(ws, row, 6, row, 8);
-    cell(ws, row, 6, { formula: `=D${row}*E${row}` }, { align: 'right', format: CURRENCY });
+    cell(ws, row, 6, { formula: `=D${row}*E${row}` }, { align: 'right', format: CURRENCY_FMT });
     rangeBorder(ws, row, 1, row, 8);
     row++;
   });
 
   merge(ws, row, 1, row, 5);
-  cell(ws, row, 1, `${title} Total`, { bold: true, fill: GOLD_TINT, color: '78350F', align: 'right' });
+  cell(ws, row, 1, `${title} Total`, { bold: true, fill: GOLD_TINT, color: ACCENT_GOLD, align: 'right' });
   merge(ws, row, 6, row, 8);
   const firstData = startRow + 2;
   cell(ws, row, 6, { formula: `=SUM(F${firstData}:F${row - 1})` }, {
     bold: true,
     fill: GOLD_TINT,
-    color: '78350F',
+    color: ACCENT_GOLD,
     align: 'right',
-    format: CURRENCY
+    format: CURRENCY_FMT
   });
   rangeBorder(ws, row, 1, row, 8);
   row++;
@@ -118,142 +152,148 @@ function itemsBlock(ws, startRow, title, items, total, firstLabel = 'Item') {
 }
 
 function summaryRow(ws, row, label, valueOrFormula, opts = {}) {
-  const grand = opts.fill === INDIGO_DARK;
+  const isGrand = opts.fill === BRAND_NAVY;
   merge(ws, row, 1, row, 5);
   cell(ws, row, 1, label, {
-    bold: grand || opts.bold || opts.fill === GOLD_TINT,
-    fill: opts.fill || (opts.bold && !grand ? GOLD_TINT : null),
-    color: grand ? 'FFFFFF' : opts.fill === GOLD_TINT ? '78350F' : TEXT_COLOR,
+    bold: isGrand || opts.bold || opts.fill === GOLD_TINT,
+    fill: opts.fill || (opts.bold && !isGrand ? GOLD_TINT : null),
+    color: isGrand ? 'FFFFFF' : opts.fill === GOLD_TINT ? ACCENT_GOLD : TEXT_DARK,
     align: 'right',
-    height: grand ? 22 : null
+    height: isGrand ? 24 : 20
   });
   merge(ws, row, 6, row, 8);
-  const v =
-    typeof valueOrFormula === 'object' && valueOrFormula.formula
-      ? { formula: valueOrFormula.formula }
-      : valueOrFormula;
+  const v = typeof valueOrFormula === 'object' && valueOrFormula.formula
+    ? { formula: valueOrFormula.formula }
+    : valueOrFormula;
   cell(ws, row, 6, v, {
-    bold: grand || opts.bold || opts.fill === GOLD_TINT,
-    fill: opts.fill || (opts.bold && !grand ? GOLD_TINT : null),
-    color: grand ? 'FFFFFF' : opts.fill === GOLD_TINT ? '78350F' : TEXT_COLOR,
+    bold: isGrand || opts.bold || opts.fill === GOLD_TINT,
+    fill: opts.fill || (opts.bold && !isGrand ? GOLD_TINT : null),
+    color: isGrand ? 'FFFFFF' : opts.fill === GOLD_TINT ? ACCENT_GOLD : opts.color || TEXT_DARK,
     align: 'right',
-    format: CURRENCY
+    format: CURRENCY_FMT,
+    doubleBottom: isGrand
   });
   rangeBorder(ws, row, 1, row, 8);
 }
 
-const TEXT_COLOR = '1F2937';
-
 export async function exportInvoiceToExcel(invoiceData, invoiceNumber) {
   const workbook = new ExcelJS.Workbook();
   workbook.creator = 'Moon Light Resort Billing System';
-  const ws = workbook.addWorksheet('Invoice');
+  const ws = workbook.addWorksheet('Tax Invoice');
   ws.columns = COLS;
 
-  const t = invoiceData.totals;
+  const t = invoiceData.totals || {};
   const dateDisplay = formatDateDDMMYYYY(invoiceData.dateISO);
   const logo = await getLogoBase64();
 
-  ws.getRow(1).height = 30;
-  ws.getRow(2).height = 22;
-  ws.getRow(3).height = 22;
+  ws.getRow(1).height = 32;
+  ws.getRow(2).height = 20;
+  ws.getRow(3).height = 20;
+  ws.getRow(4).height = 20;
 
-  merge(ws, 1, 1, 3, 1);
+  merge(ws, 1, 1, 4, 1);
   if (logo) {
     const imgId = workbook.addImage({ base64: logo, extension: 'png' });
-    ws.addImage(imgId, { tl: { col: 0, row: 0 }, ext: { width: 78, height: 78 } });
+    ws.addImage(imgId, { tl: { col: 0.1, row: 0.1 }, ext: { width: 84, height: 84 } });
   }
+
   merge(ws, 1, 2, 1, 8);
-  cell(ws, 1, 2, invoiceData.seller.name, { bold: true, color: 'FFFFFF', size: 20, align: 'center', border: false });
-  merge(ws, 2, 2, 2, 8);
-  cell(ws, 2, 2, 'BOOKING & HOSPITALITY SERVICES', {
-    bold: true,
-    color: GOLD,
-    size: 9.5,
-    align: 'center',
-    border: false
-  });
-  merge(ws, 3, 2, 3, 8);
-  cell(ws, 3, 2, `${invoiceData.seller.addressLine1} ${invoiceData.seller.addressLine2}`, {
-    color: 'E0E7FF',
-    size: 9.5,
-    align: 'center',
-    border: false,
-    wrap: true
-  });
-  ws.getRow(3).height = 32;
-  merge(ws, 4, 2, 4, 8);
-  cell(ws, 4, 2, `GSTIN: ${invoiceData.seller.gstin}    State: ${invoiceData.seller.stateCode} - ${invoiceData.seller.stateName}`, {
+  cell(ws, 1, 2, invoiceData.seller?.name || 'MOON LIGHT RESORT', {
     bold: true,
     color: 'FFFFFF',
-    size: 10,
+    size: 18,
     align: 'center',
     border: false
   });
-  ws.getRow(4).height = 20;
-  rangeFill(ws, 1, 1, 4, 8, INDIGO);
 
-  ws.getRow(5).height = 5;
-  band(ws, 5, GOLD);
+  merge(ws, 2, 2, 2, 8);
+  cell(ws, 2, 2, 'LUXURY HOSPITALITY & RESORT SERVICES', {
+    bold: true,
+    color: '93C5FD',
+    size: 9.5,
+    align: 'center',
+    border: false
+  });
+
+  merge(ws, 3, 2, 3, 8);
+  cell(ws, 3, 2, `${invoiceData.seller?.addressLine1 || ''} ${invoiceData.seller?.addressLine2 || ''}`, {
+    color: 'E2E8F0',
+    size: 9,
+    align: 'center',
+    border: false
+  });
+
+  merge(ws, 4, 2, 4, 8);
+  cell(ws, 4, 2, `GSTIN: ${invoiceData.seller?.gstin || ''}    •    State: ${invoiceData.seller?.stateCode || ''} - ${invoiceData.seller?.stateName || ''}`, {
+    bold: true,
+    color: 'FFFFFF',
+    size: 9.5,
+    align: 'center',
+    border: false
+  });
+
+  rangeFill(ws, 1, 1, 4, 8, BRAND_NAVY);
+
+  ws.getRow(5).height = 4;
+  merge(ws, 5, 1, 5, 8);
+  cell(ws, 5, 1, '', { fill: BRAND_BLUE, border: false, height: 4 });
 
   ws.getRow(6).height = 26;
-  headerRow(ws, 6, 'TAX INVOICE');
+  headerBand(ws, 6, 'TAX INVOICE');
 
+  // Customer & Invoice Details Grid
   merge(ws, 8, 1, 8, 4);
-  cell(ws, 8, 1, 'BILL TO', { bold: true, fill: LAVENDER, color: INDIGO_DARK, height: 22 });
+  cell(ws, 8, 1, 'CUSTOMER BILL TO', { bold: true, fill: BRAND_BLUE_LIGHT, color: BRAND_BLUE, height: 22 });
   merge(ws, 8, 5, 8, 8);
-  cell(ws, 8, 5, 'INVOICE DETAILS', { bold: true, fill: LAVENDER, color: INDIGO_DARK });
+  cell(ws, 8, 5, 'INVOICE METADATA', { bold: true, fill: BRAND_BLUE_LIGHT, color: BRAND_BLUE });
   rangeBorder(ws, 8, 1, 8, 8);
 
   merge(ws, 9, 1, 9, 4);
-  cell(ws, 9, 1, invoiceData.customerName || '—', { bold: true, color: INDIGO_DARK });
+  cell(ws, 9, 1, invoiceData.customerName || '—', { bold: true, color: BRAND_NAVY });
   merge(ws, 9, 5, 9, 8);
-  cell(ws, 9, 5, `Invoice No: ${invoiceData.invoiceNumber}`, { bold: true });
+  cell(ws, 9, 5, `Invoice Number: ${invoiceData.invoiceNumber || invoiceNumber || '—'}`, { bold: true });
 
   merge(ws, 10, 1, 10, 4);
-  cell(ws, 10, 1, invoiceData.hasGuestGstin ? `GSTIN: ${invoiceData.guestGstin}` : 'GST: Unregistered / No GST');
+  cell(ws, 10, 1, invoiceData.hasGuestGstin ? `GSTIN: ${invoiceData.guestGstin}` : 'Customer GST: Unregistered / None');
   merge(ws, 10, 5, 10, 8);
-  cell(ws, 10, 5, `Date: ${dateDisplay}`);
+  cell(ws, 10, 5, `Invoice Date: ${dateDisplay}`);
 
   merge(ws, 11, 1, 11, 4);
-  cell(ws, 11, 1, `Heads: ${invoiceData.members + invoiceData.children} (${invoiceData.members} Adults + ${invoiceData.children} Children${invoiceData.free > 0 ? ` + ${invoiceData.free} Free` : ''})`);
+  const totalGuests = (invoiceData.members || 0) + (invoiceData.children || 0) + (invoiceData.free || 0);
+  cell(ws, 11, 1, `Total Guests: ${totalGuests} (${invoiceData.members || 0} Adults + ${invoiceData.children || 0} Children${invoiceData.free > 0 ? ` + ${invoiceData.free} Free` : ''})`);
   merge(ws, 11, 5, 11, 8);
-  cell(ws, 11, 5, `Place of Supply: ${invoiceData.seller.stateName} (${invoiceData.seller.stateCode})`);
+  cell(ws, 11, 5, `Place of Supply: ${invoiceData.seller?.stateName || ''} (${invoiceData.seller?.stateCode || ''})`);
 
   merge(ws, 12, 1, 12, 4);
-  cell(ws, 12, 1, `Package Type: ${invoiceData.packageLabel}`);
+  cell(ws, 12, 1, `Package: ${invoiceData.packageLabel || '—'}`);
   merge(ws, 12, 5, 12, 8);
-  cell(ws, 12, 5, `Package Rate: ${formatINR2Export(t.packageRate)} / member`);
+  cell(ws, 12, 5, `Rate per Member: ${formatINR2Export(t.packageRate)} / adult`);
   rangeBorder(ws, 8, 1, 12, 8);
 
   let row = 14;
-  row = itemsBlock(ws, row, 'Booking / Package Details', [
+  row = itemsBlock(ws, row, 'Stay & Package Breakdown', [
     { name: `${invoiceData.packageLabel} Package (Adults)`, qty: invoiceData.members, rate: t.packageRate },
-    ...(invoiceData.children > 0
-      ? [{ name: 'Children (50% rate)', qty: invoiceData.children, rate: t.childRate }]
-      : []),
-    ...(invoiceData.free > 0
-      ? [{ name: 'Complimentary (Free)', qty: invoiceData.free, rate: 0 }]
-      : [])
+    ...(invoiceData.children > 0 ? [{ name: 'Children (50% Rate)', qty: invoiceData.children, rate: t.childRate }] : []),
+    ...(invoiceData.free > 0 ? [{ name: 'Complimentary Free Guests', qty: invoiceData.free, rate: 0 }] : [])
   ], t.packageTotal, 'Description');
   row++;
 
   if (invoiceData.extraFood && invoiceData.extraFood.length) {
-    row = itemsBlock(ws, row, 'Extra Food', invoiceData.extraFood, t.extraFoodTotal, 'Item');
+    row = itemsBlock(ws, row, 'Additional Food & Beverages', invoiceData.extraFood, t.extraFoodTotal, 'Item Description');
     row++;
   }
   if (invoiceData.iceCreamItems && invoiceData.iceCreamItems.length) {
-    row = itemsBlock(ws, row, 'Ice Cream', invoiceData.iceCreamItems, t.iceCreamTotal, 'Item');
+    row = itemsBlock(ws, row, 'Ice Cream Orders', invoiceData.iceCreamItems, t.iceCreamTotal, 'Flavor / Item');
     row++;
   }
   if (invoiceData.coolDrinkItems && invoiceData.coolDrinkItems.length) {
-    row = itemsBlock(ws, row, 'Cool Drinks', invoiceData.coolDrinkItems, t.coolDrinksTotal, 'Item');
+    row = itemsBlock(ws, row, 'Soft Drinks & Beverages', invoiceData.coolDrinkItems, t.coolDrinksTotal, 'Beverage Item');
     row++;
   }
 
-  headerRow(ws, row, 'PRICE SUMMARY');
+  headerBand(ws, row, 'FINANCIAL SETTLEMENT SUMMARY');
   row++;
-  summaryRow(ws, row, 'Subtotal (Package + Food + Ice Cream + Cool Drinks)', t.grossSubtotal);
+  summaryRow(ws, row, 'Gross Subtotal', t.grossSubtotal);
   row++;
   summaryRow(
     ws,
@@ -262,77 +302,56 @@ export async function exportInvoiceToExcel(invoiceData, invoiceNumber) {
     t.discountAmount
   );
   row++;
-  summaryRow(ws, row, 'Taxable Amount', t.taxableAmount, { bold: true });
+  summaryRow(ws, row, 'Net Taxable Value', t.taxableAmount, { bold: true });
   row++;
-  summaryRow(ws, row, `CGST @ ${(t.gstPercent / 2).toFixed(2)}%`, t.cgst);
+  summaryRow(ws, row, `Central GST (CGST) @ ${(t.gstPercent / 2).toFixed(2)}%`, t.cgst);
   row++;
-  summaryRow(ws, row, `SGST @ ${(t.gstPercent / 2).toFixed(2)}%`, t.sgst);
+  summaryRow(ws, row, `State GST (SGST) @ ${(t.gstPercent / 2).toFixed(2)}%`, t.sgst);
   row++;
-  summaryRow(ws, row, 'Total GST', t.gstAmount);
+  summaryRow(ws, row, 'Total GST Output', t.gstAmount);
   row++;
-  summaryRow(ws, row, 'Grand Total', t.grandTotal, { bold: true, fill: INDIGO_DARK });
+  summaryRow(ws, row, 'GRAND TOTAL INVOICE VALUE', t.grandTotal, { bold: true, fill: BRAND_NAVY });
   row++;
-  summaryRow(ws, row, 'Received Amount', t.received, { bold: true });
+  summaryRow(ws, row, 'Amount Received / Paid', t.received, { bold: true, color: SUCCESS_GREEN });
   row++;
-  summaryRow(ws, row, 'Balance', t.balance, { bold: true });
+  summaryRow(ws, row, 'Outstanding Balance Due', t.balance, { bold: true, color: (t.balance || 0) > 0 ? DANGER_RED : SUCCESS_GREEN });
   row++;
   row++;
 
   merge(ws, row, 1, row, 8);
-  cell(ws, row, 1, `Amount in Words: ${numberToWords(t.grandTotal)}`, {
+  cell(ws, row, 1, `Amount in Words: ${numberToWords(t.grandTotal || 0)}`, {
     bold: true,
-    color: INDIGO_DARK,
+    color: BRAND_NAVY,
     border: false,
     wrap: true,
-    height: 30
+    height: 28
   });
-  row++;
-  row++;
-
-  merge(ws, row, 1, row, 8);
-  cell(ws, row, 1, 'TERMS AND CONDITIONS', { bold: true, color: INDIGO_DARK, border: false });
-  row++;
-  merge(ws, row, 1, row, 8);
-  cell(ws, row, 1, 'Thank you for doing business with us.', { border: false });
   row++;
   row++;
 
   if (invoiceData.showSignatory) {
     merge(ws, row, 5, row, 8);
-    cell(ws, row, 5, `For ${invoiceData.seller.name}`, { bold: true, color: INDIGO_DARK, border: false });
+    cell(ws, row, 5, `For ${invoiceData.seller?.name || 'Moon Light Resort'}`, { bold: true, color: BRAND_NAVY, border: false });
     row += 3;
     merge(ws, row, 5, row, 8);
-    const sigCell = cell(ws, row, 5, 'Authorized Signatory', { border: false, color: '6B7280' });
+    cell(ws, row, 5, 'Authorized Signatory', { border: false, color: TEXT_MUTED });
     row++;
     merge(ws, row, 5, row, 8);
-    cell(ws, row, 5, invoiceData.signatoryName, { bold: true, color: INDIGO, border: false });
+    cell(ws, row, 5, invoiceData.signatoryName || 'Authorized Signatory', { bold: true, color: BRAND_BLUE, border: false });
   }
   row++;
   row++;
 
-  const footerStart = row;
   merge(ws, row, 1, row, 8);
-  cell(ws, row, 1, `MOON LIGHT RESORT  •  GSTIN ${invoiceData.seller.gstin}  •  ${invoiceData.seller.stateCode} - ${invoiceData.seller.stateName}`, {
+  cell(ws, row, 1, `MOON LIGHT RESORT  •  GSTIN ${invoiceData.seller?.gstin || ''}  •  ${invoiceData.seller?.stateCode || ''} - ${invoiceData.seller?.stateName || ''}`, {
     bold: true,
-    color: INDIGO_DARK,
+    color: BRAND_NAVY,
     size: 9.5,
-    fill: LAVENDER,
+    fill: BRAND_BLUE_LIGHT,
     border: false,
     align: 'center',
-    height: 20
+    height: 22
   });
-  row++;
-  merge(ws, row, 1, row, 8);
-  cell(ws, row, 1, `${invoiceData.seller.addressLine1} ${invoiceData.seller.addressLine2}`, {
-    color: '6B7280',
-    size: 9,
-    fill: LAVENDER,
-    border: false,
-    align: 'center',
-    height: 16
-  });
-  const topCell = ws.getCell(footerStart, 1);
-  topCell.border = { ...topCell.border, top: { style: 'medium', color: { argb: 'FFF59E0B' } } };
 
   ws.pageSetup = {
     orientation: 'portrait',
@@ -340,7 +359,7 @@ export async function exportInvoiceToExcel(invoiceData, invoiceNumber) {
     fitToPage: true,
     fitToWidth: 1,
     fitToHeight: 0,
-    margins: { left: 0.25, right: 0.25, top: 0.3, bottom: 0.3, header: 0.2, footer: 0.2 }
+    margins: { left: 0.3, right: 0.3, top: 0.4, bottom: 0.4, header: 0.2, footer: 0.2 }
   };
   ws.pageSetup.printArea = `A1:H${row}`;
   ws.views = [{ showGridLines: false }];
@@ -352,20 +371,12 @@ export async function exportInvoiceToExcel(invoiceData, invoiceNumber) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = downloadFileName(invoiceNumber, invoiceData.customerName, 'xlsx');
+  a.download = downloadFileName(invoiceNumber || invoiceData.invoiceNumber || 'NEW', invoiceData.customerName, 'xlsx');
   document.body.appendChild(a);
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
   return a.download;
-}
-
-function rangeFill(ws, r1, c1, r2, c2, fill) {
-  for (let r = r1; r <= r2; r++) {
-    for (let c = c1; c <= c2; c++) {
-      ws.getCell(r, c).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fill.replace('#', 'FF') } };
-    }
-  }
 }
 
 function formatINR2Export(n) {

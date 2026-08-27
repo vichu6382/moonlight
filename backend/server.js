@@ -91,34 +91,28 @@ app.use(
    Rate Limiters
 ========================= */
 
+const isDev = process.env.NODE_ENV !== 'production';
+
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-
-  max: 5,
-
+  max: isDev ? 1000 : 50, // Generous limit in dev to prevent lockouts
   message: {
-    message:
-      'Too many login attempts. Please try again later.'
+    message: 'Too many login attempts. Please wait a few minutes and try again.'
   },
-
   standardHeaders: true,
-
-  legacyHeaders: false
+  legacyHeaders: false,
+  skip: () => isDev // Skip in local development
 });
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-
-  max: 100,
-
+  max: isDev ? 10000 : 1500, // Appropriate ceiling for SPA API calls
   message: {
-    message:
-      'Too many requests. Please try again later.'
+    message: 'Too many requests. Please try again later.'
   },
-
   standardHeaders: true,
-
-  legacyHeaders: false
+  legacyHeaders: false,
+  skip: () => isDev // Skip in local development
 });
 
 /* =========================

@@ -57,16 +57,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 82px;
-  height: 82px;
+  width: 88px;
+  height: 88px;
   background: var(--inv-logo-frame-bg, #ffffff);
   border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+  border: 2px solid rgba(255, 255, 255, 0.9);
 }
 
 .invoice-logo {
-  width: 74px;
-  height: 74px;
+  width: 80px;
+  height: 80px;
   object-fit: contain;
   border-radius: 50%;
 }

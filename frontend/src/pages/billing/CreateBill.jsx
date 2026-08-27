@@ -1,6 +1,9 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FileText, Save, FilePlus2, FileDown, FileSpreadsheet, Printer } from 'lucide-react';
+import {
+  FileText, Save, FilePlus2, FileDown, FileSpreadsheet,
+  Printer, ArrowLeft, Sparkles
+} from 'lucide-react';
 import { InvoiceForm } from '../../components/InvoiceForm/InvoiceForm';
 import { InvoicePreview } from '../../components/InvoicePreview/InvoicePreview';
 import { PreviewScale } from '../../components/InvoicePreview/PreviewScale';
@@ -164,6 +167,67 @@ function buildInvoiceRecord(form, totals, settings) {
   };
 }
 
+/* ---------- PIXEL-PERFECT CREATE BILL SKELETON LOADER ---------- */
+function CreateBillSkeleton() {
+  return (
+    <div className="bill-skeleton-layout">
+      {/* Left Column Form Skeleton */}
+      <section className="bill-skeleton-form">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div className="skeleton-pulse" style={{ height: '22px', width: '180px' }} />
+            <div className="skeleton-pulse" style={{ height: '13px', width: '260px' }} />
+          </div>
+          <div className="skeleton-pulse" style={{ height: '28px', width: '80px', borderRadius: '9999px' }} />
+        </div>
+
+        {/* 5 Accordion Skeletons */}
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="bill-skeleton-section">
+            <div className="skeleton-pulse" style={{ width: '36px', height: '36px', borderRadius: '9px' }} />
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              <div className="skeleton-pulse" style={{ height: '14px', width: `${40 + (i * 12) % 30}%` }} />
+              <div className="skeleton-pulse" style={{ height: '11px', width: `${60 + (i * 7) % 20}%` }} />
+            </div>
+            <div className="skeleton-pulse" style={{ width: '20px', height: '20px', borderRadius: '6px' }} />
+          </div>
+        ))}
+      </section>
+
+      {/* Right Column Invoice Sheet Skeleton */}
+      <section className="bill-skeleton-preview">
+        <div className="bill-skeleton-sheet">
+          {/* Top Toolbar */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 20px', borderBottom: '1px solid var(--card-border)' }}>
+            <div className="skeleton-pulse" style={{ height: '18px', width: '140px' }} />
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <div className="skeleton-pulse" style={{ height: '32px', width: '70px', borderRadius: '7px' }} />
+              <div className="skeleton-pulse" style={{ height: '32px', width: '75px', borderRadius: '7px' }} />
+              <div className="skeleton-pulse" style={{ height: '32px', width: '70px', borderRadius: '7px' }} />
+            </div>
+          </div>
+
+          {/* Invoice Document Placeholder */}
+          <div style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--table-head-bg)' }}>
+            <div className="skeleton-pulse" style={{ height: '70px', width: '100%', borderRadius: '10px' }} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="skeleton-pulse" style={{ height: '90px', borderRadius: '8px' }} />
+              <div className="skeleton-pulse" style={{ height: '90px', borderRadius: '8px' }} />
+            </div>
+            <div className="skeleton-pulse" style={{ height: '180px', width: '100%', borderRadius: '8px' }} />
+            <div className="skeleton-pulse" style={{ height: '80px', width: '100%', borderRadius: '8px' }} />
+          </div>
+
+          {/* Save Bar */}
+          <div style={{ padding: '16px 20px', borderTop: '1px solid var(--card-border)', display: 'flex', gap: '12px' }}>
+            <div className="skeleton-pulse" style={{ height: '40px', width: '160px', borderRadius: '8px' }} />
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export function CreateBillPage() {
   const { id: editId } = useParams();
   const navigate = useNavigate();
@@ -183,13 +247,17 @@ export function CreateBillPage() {
         if (editId) {
           const inv = await api.getInvoiceById(editId);
           if (cancelled) return;
-          if (!inv) { toast.error('Invoice not found'); navigate('/history'); return; }
+          if (!inv) {
+            toast.error('Invoice not found');
+            navigate('/history');
+            return;
+          }
           setForm(buildEditForm(inv, s));
         } else {
           setForm(defaultForm('NEW', s));
         }
-      } catch (err) {
-        toast.error('Failed to load data');
+      } catch {
+        toast.error('Failed to load bill settings');
         navigate('/history');
       } finally {
         if (!cancelled) setLoading(false);
@@ -263,7 +331,7 @@ export function CreateBillPage() {
       const validationErrors = validateForm(form);
       setErrors(validationErrors);
       if (Object.keys(validationErrors).length) {
-        toast.error('Please fix the highlighted fields before exporting.');
+        toast.error('Please complete required fields before exporting.');
         return;
       }
       setExporting(kind);
@@ -284,9 +352,9 @@ export function CreateBillPage() {
     () =>
       runExport('pdf', async () => {
         const sheet = document.querySelector('.invoice-sheet');
-        if (!sheet) throw new Error('Invoice sheet not found');
+        if (!sheet) throw new Error('Invoice sheet preview not found');
         document.body.classList.add('export-capture');
-        await new Promise((r) => setTimeout(r, 80));
+        await new Promise((r) => setTimeout(r, 60));
         try {
           await exportInvoiceToPDF(sheet, form?.invoiceNumber, () => {}, form?.customerName);
         } finally {
@@ -305,7 +373,7 @@ export function CreateBillPage() {
     const validationErrors = validateForm(form);
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length) {
-      toast.error('Please fix the highlighted fields before printing.');
+      toast.error('Please complete required fields before printing.');
       return;
     }
     window.print();
@@ -315,7 +383,7 @@ export function CreateBillPage() {
     const validationErrors = validateForm(form);
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length) {
-      toast.error('Please fix the highlighted fields before saving.');
+      toast.error('Please fix highlighted form errors before saving.');
       return;
     }
     const record = buildInvoiceRecord(form, totals, settings);
@@ -325,7 +393,7 @@ export function CreateBillPage() {
         toast.success('Invoice updated successfully.');
       } else {
         await api.createInvoice(record);
-        toast.success('Invoice created successfully.');
+        toast.success('Invoice generated and saved successfully.');
       }
       navigate('/history');
     } catch (err) {
@@ -340,36 +408,43 @@ export function CreateBillPage() {
       setForm(defaultForm('NEW', s));
       setErrors({});
       navigate('/create-bill');
-      toast.success('New invoice started.');
-    } catch (err) {
-      toast.error('Failed to load settings');
+      toast.success('New invoice template initialized.');
+    } catch {
+      toast.error('Failed to load default settings');
     }
   }, [navigate]);
 
-  if (loading || !form) return <div className="page-container"><div className="page-header"><h1 className="page-title">Loading...</h1></div></div>;
+  if (loading || !form) {
+    return <CreateBillSkeleton />;
+  }
 
   return (
     <AnimatedPage className="page-container bill-page">
       <div className="bill-layout">
+        {/* Left Column: Form Controls */}
         <section className="bill-form-col">
           <div className="card form-card">
             <div className="form-panel-header">
               <div className="form-panel-title">
-                <h2>{editId ? 'Edit Invoice' : 'Create New Bill'}</h2>
-                <p>Fill the form — preview & exports update instantly</p>
+                <h2>{editId ? `Edit Invoice (${form.invoiceNumber})` : 'Create New Bill'}</h2>
+                <p>Interactive billing form — real-time preview on right</p>
               </div>
               <div className="form-panel-actions">
-                {!editId && (
-                  <button type="button" className="btn btn-outline btn-sm" onClick={handleNewInvoice}>
-                    <FilePlus2 size={14} /> New
+                {editId ? (
+                  <button type="button" className="btn btn-outline btn-sm" onClick={() => navigate('/history')}>
+                    <ArrowLeft size={14} /> Back
+                  </button>
+                ) : (
+                  <button type="button" className="btn btn-outline btn-sm" onClick={handleNewInvoice} title="Reset to new invoice">
+                    <FilePlus2 size={14} /> Reset
                   </button>
                 )}
                 <span className="live-badge">
-                  <span className="live-dot" /> Live
+                  <Sparkles size={11} /> Live Preview
                 </span>
               </div>
             </div>
-            <div className="form-section-divider" />
+
             <InvoiceForm
               form={form}
               setField={setField}
@@ -380,35 +455,38 @@ export function CreateBillPage() {
           </div>
         </section>
 
+        {/* Right Column: Live Invoice Preview */}
         <section className="bill-preview-col">
           <div className="card card-preview">
             <div className="preview-toolbar">
               <span className="preview-toolbar-title">
-                <FileText size={16} /> Invoice Preview
+                <FileText size={16} /> Live Document Preview
               </span>
               <div className="preview-toolbar-buttons">
                 <button type="button" className="btn btn-primary btn-sm" onClick={handlePdf} disabled={exporting}>
-                  <FileDown size={14} /> {exporting === 'pdf' ? 'Generating…' : 'PDF'}
+                  <FileDown size={14} /> {exporting === 'pdf' ? 'Building PDF…' : 'PDF'}
                 </button>
                 <button type="button" className="btn btn-green btn-sm" onClick={handleExcel} disabled={exporting}>
-                  <FileSpreadsheet size={14} /> {exporting === 'excel' ? 'Generating…' : 'Excel'}
+                  <FileSpreadsheet size={14} /> {exporting === 'excel' ? 'Building Excel…' : 'Excel'}
                 </button>
                 <button type="button" className="btn btn-outline btn-sm" onClick={handlePrint} disabled={exporting}>
                   <Printer size={14} /> Print
                 </button>
               </div>
             </div>
+
             <div className="preview-scroll">
               <PreviewScale>
                 <InvoicePreview invoiceData={invoiceData} />
               </PreviewScale>
             </div>
+
             <div className="preview-save-bar">
               <button className="btn btn-primary" onClick={handleSave}>
-                <Save size={16} /> {editId ? 'Save Changes' : 'Save Invoice'}
+                <Save size={16} /> {editId ? 'Save Changes' : 'Generate & Save Bill'}
               </button>
               {editId && (
-                <button className="btn btn-outline" onClick={() => navigate('/create-bill')}>
+                <button className="btn btn-outline" onClick={() => navigate('/history')}>
                   Cancel
                 </button>
               )}

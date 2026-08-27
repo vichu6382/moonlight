@@ -1,33 +1,35 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import {
-  FileText, DollarSign, CheckCircle, Clock, Receipt, TrendingUp,
-  Calendar, BarChart3, FilePlus2, History, Users, ArrowRight
+  FileText, DollarSign, CheckCircle2, Clock, Receipt, TrendingUp,
+  Calendar, BarChart3, FilePlus2, History, Users, ArrowRight,
+  Sparkles, RefreshCw, ShieldAlert
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, PieChart, Pie, Cell
+} from 'recharts';
 import * as api from '../../services/apiService';
 import { formatINR, formatDateDDMMYYYY } from '../../utils/format';
 import { StatusBadge } from '../../components/common/StatusBadge';
-import { SkeletonCard } from '../../components/common/SkeletonLoader';
 import { AnimatedPage } from '../../components/common/AnimatedPage';
 
 const STAT_CARDS = [
-  { key: 'totalBills', label: 'Total Bills', icon: FileText, format: false, color: '#4F46E5' },
-  { key: 'totalSales', label: 'Total Sales', icon: DollarSign, format: true, color: '#059669' },
-  { key: 'totalReceived', label: 'Received', icon: CheckCircle, format: true, color: '#10B981' },
-  { key: 'totalPending', label: 'Pending', icon: Clock, format: true, color: '#F59E0B' },
-  { key: 'totalGST', label: 'GST Collected', icon: Receipt, format: true, color: '#8B5CF6' },
-  { key: 'thisMonthSales', label: 'This Month', icon: TrendingUp, format: true, color: '#0EA5E9' },
-  { key: 'thisYearSales', label: 'This Year', icon: Calendar, format: true, color: '#EC4899' },
-  { key: 'avgBill', label: 'Avg Bill', icon: BarChart3, format: true, color: '#6366F1' }
+  { key: 'totalBills', label: 'Total Invoices', icon: FileText, format: false, color: '#2563EB', sub: 'Issued bills' },
+  { key: 'totalSales', label: 'Gross Revenue', icon: DollarSign, format: true, color: '#0F172A', sub: 'Total billing value' },
+  { key: 'totalReceived', label: 'Collected', icon: CheckCircle2, format: true, color: '#059669', sub: 'Settled payments' },
+  { key: 'totalPending', label: 'Pending Balance', icon: Clock, format: true, color: '#DC2626', sub: 'Awaiting clearance' },
+  { key: 'totalGST', label: 'GST Collected', icon: Receipt, format: true, color: '#6366F1', sub: 'Tax liability yield' },
+  { key: 'thisMonthSales', label: 'This Month', icon: TrendingUp, format: true, color: '#0284C7', sub: 'Current month total' },
+  { key: 'thisYearSales', label: 'This Year', icon: Calendar, format: true, color: '#D97706', sub: 'Year-to-date total' },
+  { key: 'avgBill', label: 'Average Ticket', icon: BarChart3, format: true, color: '#8B5CF6', sub: 'Per invoice average' }
 ];
 
 const QUICK_ACTIONS = [
-  { label: 'Create New Bill', to: '/create-bill', icon: FilePlus2, color: '#4F46E5' },
-  { label: 'View History', to: '/history', icon: History, color: '#059669' },
-  { label: 'Reports', to: '/reports', icon: BarChart3, color: '#8B5CF6' },
-  { label: 'Customers', to: '/customers', icon: Users, color: '#0EA5E9' }
+  { label: 'Create New Bill', desc: 'Generate customer invoice', to: '/create-bill', icon: FilePlus2, color: '#2563EB' },
+  { label: 'Billing History', desc: 'Search & manage invoices', to: '/history', icon: History, color: '#059669' },
+  { label: 'Analytics Reports', desc: 'Sales, GST & Live ledger', to: '/reports', icon: BarChart3, color: '#8B5CF6' },
+  { label: 'Guest Directory', desc: 'Customer accounts & history', to: '/customers', icon: Users, color: '#0284C7' }
 ];
 
 const DATE_SHORTCUTS = [
@@ -37,6 +39,13 @@ const DATE_SHORTCUTS = [
   { label: 'This Year', key: 'thisYear' },
   { label: 'All Time', key: 'all' }
 ];
+
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 18) return 'Good afternoon';
+  return 'Good evening';
+}
 
 function getDateRange(shortcut) {
   const now = new Date();
@@ -62,7 +71,88 @@ function getDateRange(shortcut) {
   }
 }
 
-const PIE_COLORS = ['#10B981', '#F59E0B', '#EF4444'];
+const PIE_COLORS = ['#059669', '#D97706', '#DC2626'];
+
+/* ---------- MODERN DEDICATED SKELETON LOADER ---------- */
+function DashboardSkeleton() {
+  return (
+    <div className="db-page db-skeleton-wrap">
+      {/* Header Skeleton */}
+      <div className="db-skeleton-header">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div className="skeleton-pulse" style={{ height: '20px', width: '180px' }} />
+          <div className="skeleton-pulse" style={{ height: '32px', width: '280px' }} />
+          <div className="skeleton-pulse" style={{ height: '14px', width: '320px' }} />
+        </div>
+        <div className="skeleton-pulse" style={{ height: '38px', width: '340px', borderRadius: '10px' }} />
+      </div>
+
+      {/* 8-Card KPI Grid Skeleton */}
+      <div className="db-stats-grid">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="db-skeleton-stat-card">
+            <div className="skeleton-pulse db-skeleton-circle" />
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div className="skeleton-pulse" style={{ height: '12px', width: '50%' }} />
+              <div className="skeleton-pulse" style={{ height: '22px', width: '75%' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Dual Chart Row Skeleton */}
+      <div className="db-charts-row">
+        <div className="db-card" style={{ height: '380px', padding: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+            <div className="skeleton-pulse" style={{ height: '18px', width: '160px' }} />
+            <div className="skeleton-pulse" style={{ height: '18px', width: '60px' }} />
+          </div>
+          <div className="skeleton-pulse" style={{ height: '270px', width: '100%', borderRadius: '10px' }} />
+        </div>
+
+        <div className="db-card" style={{ height: '380px', padding: '20px' }}>
+          <div className="skeleton-pulse" style={{ height: '18px', width: '140px', marginBottom: '24px' }} />
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+            <div className="skeleton-pulse" style={{ width: '140px', height: '140px', borderRadius: '50%' }} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div className="skeleton-pulse" style={{ height: '18px', width: '100%' }} />
+            <div className="skeleton-pulse" style={{ height: '18px', width: '100%' }} />
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions Skeleton */}
+      <div className="db-actions-grid">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="db-card" style={{ padding: '18px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div className="skeleton-pulse" style={{ width: '42px', height: '42px', borderRadius: '10px' }} />
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div className="skeleton-pulse" style={{ height: '14px', width: '70%' }} />
+              <div className="skeleton-pulse" style={{ height: '10px', width: '45%' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Bottom Row Skeleton */}
+      <div className="db-bottom-row">
+        <div className="db-card" style={{ height: '320px', padding: '20px' }}>
+          <div className="skeleton-pulse" style={{ height: '18px', width: '120px', marginBottom: '16px' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="skeleton-pulse" style={{ height: '40px', width: '100%' }} />
+            ))}
+          </div>
+        </div>
+        <div className="db-card" style={{ height: '320px', padding: '20px' }}>
+          <div className="skeleton-pulse" style={{ height: '18px', width: '140px', marginBottom: '16px' }} />
+          <div className="skeleton-pulse" style={{ height: '220px', width: '100%' }} />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function DashboardPage() {
   const navigate = useNavigate();
@@ -70,14 +160,22 @@ export function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [stats, setStats] = useState({ totalBills: 0, totalSales: 0, totalReceived: 0, totalPending: 0, totalGST: 0, thisMonthSales: 0, thisYearSales: 0, avgBill: 0 });
+  const [stats, setStats] = useState({
+    totalBills: 0, totalSales: 0, totalReceived: 0, totalPending: 0,
+    totalGST: 0, thisMonthSales: 0, thisYearSales: 0, avgBill: 0
+  });
   const [monthlyData, setMonthlyData] = useState([]);
-  const [paymentData, setPaymentData] = useState({ paid: { amount: 0, count: 0 }, partial: { amount: 0, count: 0 }, unpaid: { amount: 0, count: 0 } });
+  const [paymentData, setPaymentData] = useState({
+    paid: { amount: 0, count: 0 },
+    partial: { amount: 0, count: 0 },
+    unpaid: { amount: 0, count: 0 }
+  });
   const [recentInvoices, setRecentInvoices] = useState([]);
   const [allInvoices, setAllInvoices] = useState([]);
   const [activities, setActivities] = useState([]);
 
   const currentYear = new Date().getFullYear();
+  const greeting = useMemo(() => getGreeting(), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -93,16 +191,16 @@ export function DashboardPage() {
           api.getActivities(10)
         ]);
         if (!cancelled) {
-          setStats(statsRes);
-          setMonthlyData(monthlyRes);
-          setPaymentData(paymentRes);
-          setAllInvoices(invoicesRes);
-          setRecentInvoices(invoicesRes.slice(0, 10));
-          setActivities(activitiesRes);
+          setStats(statsRes || {});
+          setMonthlyData(monthlyRes || []);
+          setPaymentData(paymentRes || { paid: { amount: 0, count: 0 }, partial: { amount: 0, count: 0 }, unpaid: { amount: 0, count: 0 } });
+          setAllInvoices(invoicesRes || []);
+          setRecentInvoices((invoicesRes || []).slice(0, 8));
+          setActivities(activitiesRes || []);
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err.message || 'Failed to load dashboard data');
+          setError(err.message || 'Failed to load dashboard metrics');
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -120,69 +218,67 @@ export function DashboardPage() {
       const d = new Date(inv.invoiceDate || inv.createdAt);
       return d >= new Date(dateRange.from) && d <= new Date(dateRange.to);
     });
+    const totalSales = invoices.reduce((s, i) => s + (i.totals?.grandTotal || 0), 0);
+    const totalReceived = invoices.reduce((s, i) => s + (i.totals?.received || 0), 0);
     return {
       totalBills: invoices.length,
-      totalSales: invoices.reduce((s, i) => s + (i.totals?.grandTotal || 0), 0),
-      totalReceived: invoices.reduce((s, i) => s + (i.totals?.received || 0), 0),
-      totalPending: invoices.reduce((s, i) => s + (i.totals?.grandTotal || 0), 0) - invoices.reduce((s, i) => s + (i.totals?.received || 0), 0),
+      totalSales,
+      totalReceived,
+      totalPending: totalSales - totalReceived,
       totalGST: invoices.reduce((s, i) => s + (i.gst?.total || 0), 0),
       thisMonthSales: stats.thisMonthSales,
       thisYearSales: stats.thisYearSales,
-      avgBill: invoices.length > 0 ? invoices.reduce((s, i) => s + (i.totals?.grandTotal || 0), 0) / invoices.length : 0
+      avgBill: invoices.length > 0 ? totalSales / invoices.length : 0
     };
   }, [dateRange, stats, allInvoices]);
 
-  const pieData = [
-    { name: 'Paid', value: paymentData.paid.amount },
-    { name: 'Partial', value: paymentData.partial.amount },
-    { name: 'Unpaid', value: paymentData.unpaid.amount }
-  ].filter((d) => d.value > 0);
+  const totalPaymentValue = useMemo(() => {
+    return (paymentData.paid.amount || 0) + (paymentData.partial.amount || 0) + (paymentData.unpaid.amount || 0);
+  }, [paymentData]);
+
+  const collectionPercent = useMemo(() => {
+    if (totalPaymentValue === 0) return 0;
+    return Math.round(((paymentData.paid.amount || 0) / totalPaymentValue) * 100);
+  }, [totalPaymentValue, paymentData.paid.amount]);
+
+  const pieData = useMemo(() => [
+    { name: 'Paid', value: paymentData.paid.amount || 0, count: paymentData.paid.count || 0, color: '#059669' },
+    { name: 'Partial', value: paymentData.partial.amount || 0, count: paymentData.partial.count || 0, color: '#D97706' },
+    { name: 'Unpaid', value: paymentData.unpaid.amount || 0, count: paymentData.unpaid.count || 0, color: '#DC2626' }
+  ].filter((d) => d.value > 0), [paymentData]);
 
   if (loading) {
-    return (
-      <div className="db-page">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.25 }}
-          style={{ padding: '24px' }}
-        >
-          <div style={{ marginBottom: '24px' }}>
-            <div className="skeleton-pulse" style={{ height: '28px', width: '160px', marginBottom: '8px' }} />
-            <div className="skeleton-pulse" style={{ height: '14px', width: '280px' }} />
-          </div>
-          <SkeletonCard count={8} />
-          <div style={{ marginTop: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div className="skeleton-pulse" style={{ height: '320px' }} />
-            <div className="skeleton-pulse" style={{ height: '320px' }} />
-          </div>
-        </motion.div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (error) {
     return (
       <div className="db-page">
         <div className="db-error">
-          <div className="db-error-icon">!</div>
-          <p>{error}</p>
+          <div className="db-error-icon">
+            <ShieldAlert size={24} />
+          </div>
+          <h2 style={{ margin: 0, fontSize: '18px' }}>Unable to load dashboard</h2>
+          <p style={{ margin: 0, color: 'var(--app-muted)' }}>{error}</p>
+          <button className="btn btn-primary" onClick={() => window.location.reload()}>
+            <RefreshCw size={14} /> Retry Loading
+          </button>
         </div>
       </div>
     );
   }
 
-  if (stats.totalBills === 0) {
+  if (stats.totalBills === 0 && allInvoices.length === 0) {
     return (
       <div className="db-page">
         <div className="db-empty">
           <div className="db-empty-icon">
             <FileText size={40} />
           </div>
-          <h2>No invoices yet</h2>
-          <p>Create your first bill to get started with the billing system.</p>
+          <h2>Welcome to Moon Light Resort!</h2>
+          <p>No invoices have been recorded yet. Start by generating your first customer invoice.</p>
           <button className="btn btn-primary" onClick={() => navigate('/create-bill')}>
-            <FilePlus2 size={16} /> Create New Bill
+            <FilePlus2 size={16} /> Create First Invoice
           </button>
         </div>
       </div>
@@ -191,142 +287,195 @@ export function DashboardPage() {
 
   return (
     <AnimatedPage className="db-page">
-      {/* Header */}
+      {/* Hero Header */}
       <div className="db-header">
         <div className="db-header-left">
-          <h1 className="db-title">Dashboard</h1>
-          <span className="db-subtitle">Welcome back! Here's your billing overview.</span>
+          <div className="db-greeting-badge">
+            <Sparkles size={13} /> {greeting}, Management Team
+          </div>
+          <h1 className="db-title">Executive Operations Hub</h1>
+          <p className="db-subtitle">Live resort billing metrics, revenue trends & financial settlements</p>
         </div>
-        <div className="db-date-filters">
-          {DATE_SHORTCUTS.map((s) => (
-            <button
-              key={s.key}
-              className={`db-date-btn ${dateShortcut === s.key ? 'db-date-btn-active' : ''}`}
-              onClick={() => setDateShortcut(s.key)}
-            >
-              {s.label}
-            </button>
-          ))}
+
+        <div className="db-header-right">
+          <div className="db-date-filters">
+            {DATE_SHORTCUTS.map((s) => (
+              <button
+                key={s.key}
+                className={`db-date-btn ${dateShortcut === s.key ? 'db-date-btn-active' : ''}`}
+                onClick={() => setDateShortcut(s.key)}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+          <button className="btn btn-primary btn-sm" onClick={() => navigate('/create-bill')}>
+            <FilePlus2 size={15} /> New Invoice
+          </button>
         </div>
       </div>
 
-      {/* Stat Cards */}
+      {/* 8-Card KPI Grid */}
       <div className="db-stats-grid">
         {STAT_CARDS.map(({ key, label, icon: Icon, format, color }) => (
           <div key={key} className="db-stat-card" style={{ '--stat-accent': color }}>
-            <div className="db-stat-icon" style={{ background: `${color}18`, color }}>
+            <div className="db-stat-icon" style={{ background: `${color}14`, color }}>
               <Icon size={20} />
             </div>
             <div className="db-stat-info">
               <span className="db-stat-label">{label}</span>
-              <span className="db-stat-value">{format ? formatINR(filteredStats[key]) : filteredStats[key]}</span>
+              <span className="db-stat-value">{format ? formatINR(filteredStats[key] || 0) : (filteredStats[key] || 0)}</span>
             </div>
             <div className="db-stat-accent-bar" style={{ background: color }} />
           </div>
         ))}
       </div>
 
-      {/* Charts Row */}
+      {/* Dual Analytics Row: Revenue Velocity & Payment Health */}
       <div className="db-charts-row">
-        {/* Revenue Chart */}
+        {/* Monthly Revenue Velocity */}
         <div className="db-card db-chart-card">
           <div className="db-card-header">
-            <h3>Monthly Revenue</h3>
-            <span className="db-card-badge">{currentYear}</span>
+            <div className="db-card-header-left">
+              <h3>Monthly Revenue Velocity</h3>
+              <span className="db-card-header-sub">Gross billing trend across year {currentYear}</span>
+            </div>
+            <span className="db-card-badge">{currentYear} Full Year</span>
           </div>
           <div className="db-card-body">
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={monthlyData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+            <ResponsiveContainer width="100%" height={290}>
+              <BarChart data={monthlyData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#4F46E5" stopOpacity={1} />
-                    <stop offset="100%" stopColor="#7C3AED" stopOpacity={0.8} />
+                  <linearGradient id="dbBarGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#2563EB" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#1D4ED8" stopOpacity={0.8} />
+                  </linearGradient>
+                  <linearGradient id="dbRecGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#059669" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#047857" stopOpacity={0.8} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--card-border, #E0E0E0)" vertical={false} />
-                <XAxis dataKey="label" tick={{ fontSize: 11, fill: 'var(--app-muted, #757575)' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: 'var(--app-muted, #757575)' }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--table-border-strong)" vertical={false} />
+                <XAxis dataKey="label" tick={{ fontSize: 11, fill: 'var(--app-muted)' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: 'var(--app-muted)' }} tickFormatter={(v) => `Rs ${(v / 1000).toFixed(0)}k`} axisLine={false} tickLine={false} />
                 <Tooltip
-                  formatter={(value) => [formatINR(value), 'Revenue']}
-                  contentStyle={{ borderRadius: '10px', border: '1px solid var(--card-border, #E0E0E0)', fontSize: '12px', background: 'var(--card-bg, #fff)', color: 'var(--page-title, #212121)' }}
-                  cursor={{ fill: 'rgba(79, 70, 229, 0.06)' }}
+                  formatter={(value, name) => [formatINR(value), name === 'sales' ? 'Gross Revenue' : 'Settled Amount']}
+                  contentStyle={{ borderRadius: '10px', border: '1px solid var(--card-border)', fontSize: '12px', background: 'var(--card-bg)', color: 'var(--page-title)' }}
                 />
-                <Bar dataKey="sales" fill="url(#barGrad)" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="sales" fill="url(#dbBarGrad)" radius={[5, 5, 0, 0]} name="sales" />
+                <Bar dataKey="received" fill="url(#dbRecGrad)" radius={[5, 5, 0, 0]} name="received" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Payment Status */}
+        {/* Payment Health & Collection Status */}
         <div className="db-card db-payment-card">
           <div className="db-card-header">
-            <h3>Payment Status</h3>
+            <div className="db-card-header-left">
+              <h3>Settlement Health</h3>
+              <span className="db-card-header-sub">Collections vs outstanding</span>
+            </div>
+            <span className="live-badge" style={{ fontSize: '11px', padding: '2px 8px' }}>
+              <span className="live-dot" /> {collectionPercent}% Settled
+            </span>
           </div>
           <div className="db-card-body">
             {pieData.length > 0 ? (
               <div className="db-payment-content">
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie data={pieData} cx="50%" cy="50%" outerRadius={80} innerRadius={50} dataKey="value" paddingAngle={3}>
-                      {pieData.map((_, i) => (
-                        <Cell key={i} fill={PIE_COLORS[i % 3]} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(value) => formatINR(value)} contentStyle={{ borderRadius: '10px', fontSize: '12px', background: 'var(--card-bg, #fff)', border: '1px solid var(--card-border, #E0E0E0)' }} />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="db-payment-legend">
+                <div className="db-payment-chart-wrap">
+                  <ResponsiveContainer width="100%" height={160}>
+                    <PieChart>
+                      <Pie
+                        data={pieData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={52}
+                        outerRadius={74}
+                        dataKey="value"
+                        paddingAngle={3}
+                      >
+                        {pieData.map((d, i) => (
+                          <Cell key={i} fill={d.color || PIE_COLORS[i % 3]} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(value) => formatINR(value)}
+                        contentStyle={{ borderRadius: '10px', fontSize: '12px', background: 'var(--card-bg)', border: '1px solid var(--card-border)' }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="db-payment-center-label">
+                    <span className="db-payment-center-val">{collectionPercent}%</span>
+                    <span className="db-payment-center-sub">Collected</span>
+                  </div>
+                </div>
+
+                {/* Progress Breakdown Bars */}
+                <div className="db-payment-progress-list">
                   {[
-                    { name: 'Paid', count: paymentData.paid.count, color: '#10B981' },
-                    { name: 'Partial', count: paymentData.partial.count, color: '#F59E0B' },
-                    { name: 'Unpaid', count: paymentData.unpaid.count, color: '#EF4444' }
-                  ].filter(d => d.count > 0).map((d) => (
-                    <div key={d.name} className="db-legend-item">
-                      <span className="db-legend-dot" style={{ background: d.color }} />
-                      <span className="db-legend-label">{d.name}</span>
-                      <span className="db-legend-count">{d.count} bills</span>
-                    </div>
-                  ))}
+                    { label: 'Paid in Full', amount: paymentData.paid.amount, count: paymentData.paid.count, color: '#059669' },
+                    { label: 'Partial Advance', amount: paymentData.partial.amount, count: paymentData.partial.count, color: '#D97706' },
+                    { label: 'Unpaid / Pending', amount: paymentData.unpaid.amount, count: paymentData.unpaid.count, color: '#DC2626' }
+                  ].map((p) => {
+                    const pct = totalPaymentValue > 0 ? Math.round((p.amount / totalPaymentValue) * 100) : 0;
+                    return (
+                      <div key={p.label} className="db-payment-progress-row">
+                        <div className="db-payment-progress-meta">
+                          <span className="db-payment-progress-name">
+                            <span className="db-payment-progress-dot" style={{ background: p.color }} />
+                            {p.label} ({p.count})
+                          </span>
+                          <span className="db-payment-progress-amount">{formatINR(p.amount)}</span>
+                        </div>
+                        <div className="db-progress-track">
+                          <div className="db-progress-fill" style={{ width: `${pct}%`, background: p.color }} />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ) : (
-              <div className="db-no-data">No payment data</div>
+              <div className="db-no-data">No payment transactions recorded</div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="db-card">
-        <div className="db-card-header">
-          <h3>Quick Actions</h3>
-        </div>
-        <div className="db-card-body">
-          <div className="db-actions-grid">
-            {QUICK_ACTIONS.map(({ label, to, icon: Icon, color }) => (
-              <button key={to} className="db-action-btn" onClick={() => navigate(to)} style={{ '--action-color': color }}>
-                <div className="db-action-icon" style={{ background: `${color}15`, color }}>
-                  <Icon size={20} />
-                </div>
-                <span className="db-action-label">{label}</span>
-                <ArrowRight size={14} className="db-action-arrow" />
-              </button>
-            ))}
-          </div>
-        </div>
+      {/* Executive Quick Actions */}
+      <div className="db-actions-grid">
+        {QUICK_ACTIONS.map(({ label, desc, to, icon: Icon, color }) => (
+          <button
+            key={to}
+            className="db-action-btn"
+            onClick={() => navigate(to)}
+            style={{ '--action-color': color }}
+          >
+            <div className="db-action-icon" style={{ background: `${color}14`, color }}>
+              <Icon size={22} />
+            </div>
+            <div className="db-action-text">
+              <span className="db-action-label">{label}</span>
+              <span className="db-action-desc">{desc}</span>
+            </div>
+            <ArrowRight size={16} className="db-action-arrow" />
+          </button>
+        ))}
       </div>
 
-      {/* Bottom Row: Activity + Bills */}
+      {/* Bottom Row: Activity Feed & Recent Invoices Table */}
       <div className="db-bottom-row">
-        {/* Recent Activity */}
+        {/* Recent Activity Audit */}
         <div className="db-card">
           <div className="db-card-header">
-            <h3>Recent Activity</h3>
+            <h3>Recent Audit Activity</h3>
+            <span className="db-card-badge">{activities.length} logs</span>
           </div>
           <div className="db-card-body db-card-body-scroll">
             {activities.length > 0 ? (
               <div className="db-activity-list">
-                {activities.slice(0, 8).map((act, idx) => (
+                {activities.slice(0, 7).map((act, idx) => (
                   <div key={act._id || act.id || idx} className="db-activity-item">
                     <div className="db-activity-dot" />
                     <div className="db-activity-content">
@@ -343,21 +492,21 @@ export function DashboardPage() {
           </div>
         </div>
 
-        {/* Recent Bills */}
+        {/* Recent Invoices Table */}
         <div className="db-card">
           <div className="db-card-header">
-            <h3>Recent Bills</h3>
+            <h3>Recent Invoices</h3>
             <button className="db-view-all" onClick={() => navigate('/history')}>
-              View All <ArrowRight size={12} />
+              View All History <ArrowRight size={13} />
             </button>
           </div>
-          <div className="db-card-body db-card-body-scroll">
+          <div className="db-card-body db-card-body-scroll" style={{ padding: 0 }}>
             <div className="db-bills-table-wrap">
               <table className="db-bills-table">
                 <thead>
                   <tr>
-                    <th>Invoice</th>
-                    <th>Customer</th>
+                    <th>Invoice No</th>
+                    <th>Customer Name</th>
                     <th>Date</th>
                     <th className="db-th-right">Amount</th>
                     <th className="db-th-center">Status</th>
@@ -367,15 +516,25 @@ export function DashboardPage() {
                 <tbody>
                   {recentInvoices.map((inv) => (
                     <tr key={inv._id || inv.id}>
-                      <td className="db-td-mono">{inv.invoiceNumber}</td>
-                      <td>{inv.customer?.name || '—'}</td>
+                      <td className="db-td-mono" style={{ color: 'var(--primary)', fontWeight: 600 }}>
+                        {inv.invoiceNumber}
+                      </td>
+                      <td style={{ fontWeight: 500 }}>{inv.customer?.name || '—'}</td>
                       <td>{formatDateDDMMYYYY(inv.invoiceDate)}</td>
-                      <td className="db-td-right">{formatINR(inv.totals?.grandTotal)}</td>
+                      <td className="db-td-right db-td-mono" style={{ fontWeight: 700 }}>
+                        {formatINR(inv.totals?.grandTotal)}
+                      </td>
                       <td className="db-td-center">
                         <StatusBadge status={inv.paymentStatus} />
                       </td>
                       <td className="db-td-center">
-                        <button className="btn btn-sm btn-ghost" onClick={() => navigate(`/history/${inv._id || inv.id}`)}>View</button>
+                        <button
+                          className="btn btn-sm btn-ghost"
+                          onClick={() => navigate(`/history/${inv._id || inv.id}`)}
+                          style={{ padding: '3px 8px', fontSize: '11.5px' }}
+                        >
+                          View
+                        </button>
                       </td>
                     </tr>
                   ))}

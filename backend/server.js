@@ -46,7 +46,8 @@ app.use(
 const allowedOrigins = [
   'http://localhost:5173',
   process.env.FRONTEND_URL,
-  'https://moonlight-one-rho.vercel.app'
+  'https://moonlight-one-rho.vercel.app',
+  'https://moonlightresortstay.vercel.app'
 ].filter(Boolean);
 
 app.use(

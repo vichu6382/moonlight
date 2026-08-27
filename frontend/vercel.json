@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://moonlightbckend.vercel.app/api/:path*"
+      "destination": "https://moonlightresortbackend.vercel.app/api/:path*"
     },
     {
       "source": "/(.*)",
